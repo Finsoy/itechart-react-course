@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import {Container, Typography} from "@material-ui/core";
+import {Container} from "@material-ui/core";
 import MyCard from "../components/MyCard/MyCard";
 import Header from "../components/Header/Header";
 
