@@ -27,7 +27,6 @@ const MyModal = ({
             title: cardHeaderText,
             body: cardBodyText
         })
-        console.log(cards)
         setCardHeaderText("")
         setCardBodyText("")
         handleClose();
