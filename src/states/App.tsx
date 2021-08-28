@@ -4,12 +4,12 @@ import {Button, Container} from "@material-ui/core";
 import MyCard from "../components/MyCard/MyCard";
 import Header from "../components/Header/Header";
 import MyModal from "./MyModal/MyModal";
+import arrayCards from '../data/arrayCards.json'
 
 const useStyles = makeStyles({
     cardContainer: {
         display: "flex",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
+        flexWrap: "wrap"
     },
     addCardBtn: {
         margin: "1rem auto",
@@ -19,8 +19,8 @@ const useStyles = makeStyles({
 });
 
 const App = () => {
-    const [cardHeaderText, setCardHeaderText] = useState<string>('Header')
-    const [cardBodyText, setCardBodyText] = useState<string>('Body')
+    const [cardHeaderText, setCardHeaderText] = useState<string>('')
+    const [cardBodyText, setCardBodyText] = useState<string>('')
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const classes = useStyles();
 
@@ -33,8 +33,7 @@ const App = () => {
     };
 
     const handleClick = () => {
-        setIsOpen(true)
-        console.log('click')
+        handleOpen()
     }
 
 
@@ -44,12 +43,19 @@ const App = () => {
             <Button variant="contained" color="primary" onClick={handleClick} className={classes.addCardBtn}>
                 Add card
             </Button>
-            <Container fixed className={classes.cardContainer}>
-                <MyCard headerText={cardHeaderText} bodyText={cardBodyText}/>
-                <MyCard headerText={cardHeaderText} bodyText={cardBodyText}/>
-                <MyCard headerText={cardHeaderText} bodyText={cardBodyText}/>
+            <Container maxWidth="lg" className={classes.cardContainer}>
+                {arrayCards.map(({title, body}) => {
+                    return <MyCard headerText={title} bodyText={body}/>
+                })}
             </Container>
-            <MyModal isOpen={isOpen} handleClose={handleClose}/>
+            <MyModal
+                isOpen={isOpen}
+                handleClose={handleClose}
+                cardHeaderText={cardHeaderText}
+                setCardHeaderText={setCardHeaderText}
+                cardBodyText={cardBodyText}
+                setCardBodyText={setCardBodyText}
+                cards={arrayCards}/>
         </div>
     );
 };
