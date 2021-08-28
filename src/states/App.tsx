@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import {Container} from "@material-ui/core";
 import MyCard from "../components/MyCard/MyCard";
 import Header from "../components/Header/Header";
+import arrayCards from '../data/arrayCards.json'
 
 const useStyles = makeStyles({
     cardContainer: {
@@ -13,16 +14,14 @@ const useStyles = makeStyles({
 });
 
 const App = () => {
-    const [cardHeaderText, setCardHeaderText] = useState<string>('Header')
-    const [cardBodyText, setCardBodyText] = useState<string>('Body')
     const classes = useStyles();
     return (
         <div>
             <Header/>
             <Container fixed className={classes.cardContainer}>
-                <MyCard headerText={cardHeaderText} bodyText={cardBodyText}/>
-                <MyCard headerText={cardHeaderText} bodyText={cardBodyText}/>
-                <MyCard headerText={cardHeaderText} bodyText={cardBodyText}/>
+                {arrayCards.map(({title, body}) => {
+                    return <MyCard headerText={title} bodyText={body}/>
+                })}
             </Container>
         </div>
     );
