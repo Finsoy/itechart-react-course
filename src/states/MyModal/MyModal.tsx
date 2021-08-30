@@ -2,7 +2,7 @@ import React, {ChangeEvent, FormEvent} from 'react';
 import {v4} from 'uuid';
 import {makeStyles} from "@material-ui/core/styles";
 import {Button, Modal, TextField} from "@material-ui/core";
-import ICardsDataDTO from "../../data/ICardsDataDTO";
+import ICardsDataDTO from "../../models/ICardsDataDTO";
 
 interface IModalProps {
     isOpen: boolean;
