@@ -6,9 +6,8 @@ import ICardsDataDTO from "../../models/ICardsDataDTO";
 interface ICardProps {
     headerText: string;
     bodyText: string;
-    cards: Array<{ title: string, body: string }>;
     id: string;
-    setCards: React.Dispatch<React.SetStateAction<Array<ICardsDataDTO>>>;
+    setCards: React.Dispatch<React.SetStateAction<ICardsDataDTO[]>>;
     cardHeaderText: string;
     setCardHeaderText: React.Dispatch<React.SetStateAction<string>>;
     cardBodyText: string;
@@ -51,7 +50,6 @@ const useStyles = makeStyles({
 const MyCard = ({
                     headerText,
                     bodyText,
-                    cards,
                     id,
                     setCards,
                     cardBodyText,

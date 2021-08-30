@@ -50,7 +50,6 @@ const App = () => {
                     return <MyCard
                         headerText={title}
                         bodyText={body}
-                        cards={cards}
                         id={id}
                         setCards={setCards}
                         cardHeaderText={cardHeaderText}
