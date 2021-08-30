@@ -20,7 +20,7 @@ const useStyles = makeStyles({
 });
 
 const App = () => {
-    const [cards] = useState<Array<ICardsDataDTO>>(arrayCards)
+    const [cards] = useState<ICardsDataDTO[]>(arrayCards)
     const [cardHeaderText, setCardHeaderText] = useState<string>('')
     const [cardBodyText, setCardBodyText] = useState<string>('')
     const [isOpen, setIsOpen] = useState<boolean>(false);

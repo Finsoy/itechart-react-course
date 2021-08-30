@@ -11,7 +11,7 @@ interface IModalProps {
     setCardHeaderText: React.Dispatch<React.SetStateAction<string>>;
     cardBodyText: string;
     setCardBodyText: React.Dispatch<React.SetStateAction<string>>;
-    cards: Array<ICardsDataDTO>;
+    cards: ICardsDataDTO[];
 }
 
 const useStyles = makeStyles({
