@@ -46,12 +46,12 @@ const App = () => {
                 Add card
             </Button>
             <Container maxWidth="lg" className={classes.cardContainer}>
-                {cards.map(({title, body, id}, index) => {
+                {cards.map(({title, body, id}) => {
                     return <MyCard
                         headerText={title}
                         bodyText={body}
                         cards={cards}
-                        index={index}
+                        id={id}
                         setCards={setCards}
                         cardHeaderText={cardHeaderText}
                         setCardHeaderText={setCardHeaderText}

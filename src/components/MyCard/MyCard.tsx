@@ -7,7 +7,7 @@ interface ICardProps {
     headerText: string;
     bodyText: string;
     cards: Array<{ title: string, body: string }>;
-    index: number;
+    id: string;
     setCards: React.Dispatch<React.SetStateAction<Array<ICardsDataDTO>>>;
     cardHeaderText: string;
     setCardHeaderText: React.Dispatch<React.SetStateAction<string>>;
@@ -52,12 +52,12 @@ const MyCard = ({
                     headerText,
                     bodyText,
                     cards,
-                    index,
+                    id,
                     setCards,
                     cardBodyText,
                     cardHeaderText,
                     setCardBodyText,
-                    setCardHeaderText
+                    setCardHeaderText,
                 }: ICardProps) => {
 
     const classes = useStyles();
@@ -66,12 +66,10 @@ const MyCard = ({
     const [body, setBodyText] = useState<string>(bodyText)
 
 
-    const handleDeleteBtnClick = (index: number) => {
-        console.log(index)
+    const handleDeleteBtnClick = (id: string) => {
         setCards((prevState => {
-            return prevState.filter((item, i) => i !== index);
+            return prevState.filter((item) => item.id !== id);
         }))
-        console.log(cards)
     }
 
     const handleSaveClick = () => {
@@ -92,7 +90,7 @@ const MyCard = ({
     return (
         <Card className={classes.card}>
             <button className={classes.cardBtn} onClick={() => {
-                handleDeleteBtnClick(index)
+                handleDeleteBtnClick(id)
             }}>
                     <span className="material-icons">
                         clear
