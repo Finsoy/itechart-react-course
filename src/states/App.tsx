@@ -22,6 +22,7 @@ const App = () => {
     const [cardHeaderText, setCardHeaderText] = useState<string>('')
     const [cardBodyText, setCardBodyText] = useState<string>('')
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [cards, setCards] = useState<Array<{ title: string, body: string }>>(arrayCards)
     const classes = useStyles();
 
     const handleOpen = () => {
@@ -44,8 +45,18 @@ const App = () => {
                 Add card
             </Button>
             <Container maxWidth="lg" className={classes.cardContainer}>
-                {arrayCards.map(({title, body}) => {
-                    return <MyCard headerText={title} bodyText={body}/>
+                {cards.map(({title, body}, index) => {
+                    return <MyCard
+                        headerText={title}
+                        bodyText={body}
+                        cards={cards}
+                        index={index}
+                        setCards={setCards}
+                        cardHeaderText={cardHeaderText}
+                        setCardHeaderText={setCardHeaderText}
+                        cardBodyText={cardBodyText}
+                        setCardBodyText={setCardBodyText}
+                    />
                 })}
             </Container>
             <MyModal
@@ -55,7 +66,7 @@ const App = () => {
                 setCardHeaderText={setCardHeaderText}
                 cardBodyText={cardBodyText}
                 setCardBodyText={setCardBodyText}
-                cards={arrayCards}/>
+                cards={cards}/>
         </div>
     );
 };
