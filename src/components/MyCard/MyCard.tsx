@@ -1,14 +1,14 @@
 import React, {ChangeEvent, useState} from 'react';
-import './MyCard.scss';
 import {Button, Card, CardActionArea, CardContent, TextField, Typography} from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
+import ICardsDataDTO from "../../models/ICardsDataDTO";
 
 interface ICardProps {
     headerText: string;
     bodyText: string;
     cards: Array<{ title: string, body: string }>;
     index: number;
-    setCards: React.Dispatch<React.SetStateAction<{ title: string, body: string }[]>>;
+    setCards: React.Dispatch<React.SetStateAction<Array<ICardsDataDTO>>>;
     cardHeaderText: string;
     setCardHeaderText: React.Dispatch<React.SetStateAction<string>>;
     cardBodyText: string;
@@ -16,6 +16,14 @@ interface ICardProps {
 }
 
 const useStyles = makeStyles({
+    card: {
+        display: "flex",
+        flexDirection: "column",
+        maxWidth: "250px",
+        width: "100%",
+        margin: "1rem",
+        cursor: "pointer",
+    },
     cardBtn: {
         display: "flex",
         justifyContent: "flex-end",
@@ -24,7 +32,6 @@ const useStyles = makeStyles({
         backgroundColor: "transparent",
         color: "#3f51b5",
         cursor: "pointer",
-        right: 0,
         margin: ".3rem"
     },
     saveBtn: {
@@ -41,7 +48,18 @@ const useStyles = makeStyles({
     }
 });
 
-const MyCard = ({headerText, bodyText, cards, index, setCards, cardBodyText, cardHeaderText, setCardBodyText, setCardHeaderText}: ICardProps) => {
+const MyCard = ({
+                    headerText,
+                    bodyText,
+                    cards,
+                    index,
+                    setCards,
+                    cardBodyText,
+                    cardHeaderText,
+                    setCardBodyText,
+                    setCardHeaderText
+                }: ICardProps) => {
+
     const classes = useStyles();
     const [isEdit, setIsEdit] = useState<boolean>(false)
     const [title, setHeaderText] = useState<string>(headerText)
@@ -51,7 +69,7 @@ const MyCard = ({headerText, bodyText, cards, index, setCards, cardBodyText, car
     const handleDeleteBtnClick = (index: number) => {
         console.log(index)
         setCards((prevState => {
-            return prevState.filter((item,i) => i !== index);
+            return prevState.filter((item, i) => i !== index);
         }))
         console.log(cards)
     }
@@ -72,7 +90,7 @@ const MyCard = ({headerText, bodyText, cards, index, setCards, cardBodyText, car
     }
 
     return (
-        <Card className="card">
+        <Card className={classes.card}>
             <button className={classes.cardBtn} onClick={() => {
                 handleDeleteBtnClick(index)
             }}>

@@ -5,6 +5,7 @@ import MyCard from "../components/MyCard/MyCard";
 import Header from "../components/Header/Header";
 import MyModal from "./MyModal/MyModal";
 import arrayCards from '../data/arrayCards.json'
+import ICardsDataDTO from "../models/ICardsDataDTO";
 
 const useStyles = makeStyles({
     cardContainer: {
@@ -22,7 +23,7 @@ const App = () => {
     const [cardHeaderText, setCardHeaderText] = useState<string>('')
     const [cardBodyText, setCardBodyText] = useState<string>('')
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [cards, setCards] = useState<Array<{ title: string, body: string }>>(arrayCards)
+    const [cards, setCards] = useState<ICardsDataDTO[]>(arrayCards)
     const classes = useStyles();
 
     const handleOpen = () => {
@@ -45,7 +46,7 @@ const App = () => {
                 Add card
             </Button>
             <Container maxWidth="lg" className={classes.cardContainer}>
-                {cards.map(({title, body}, index) => {
+                {cards.map(({title, body, id}, index) => {
                     return <MyCard
                         headerText={title}
                         bodyText={body}
@@ -56,6 +57,7 @@ const App = () => {
                         setCardHeaderText={setCardHeaderText}
                         cardBodyText={cardBodyText}
                         setCardBodyText={setCardBodyText}
+                        key={id}
                     />
                 })}
             </Container>
