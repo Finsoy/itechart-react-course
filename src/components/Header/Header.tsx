@@ -1,5 +1,4 @@
 import React from 'react';
-import './Header.scss'
 import {Typography} from "@material-ui/core";
 
 const Header = () => {

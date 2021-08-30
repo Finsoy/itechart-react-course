@@ -5,6 +5,7 @@ import MyCard from "../components/MyCard/MyCard";
 import Header from "../components/Header/Header";
 import MyModal from "./MyModal/MyModal";
 import arrayCards from '../data/arrayCards.json'
+import ICardsDataDTO from "../data/ICardsDataDTO";
 
 const useStyles = makeStyles({
     cardContainer: {
@@ -44,8 +45,8 @@ const App = () => {
                 Add card
             </Button>
             <Container maxWidth="lg" className={classes.cardContainer}>
-                {arrayCards.map(({title, body}) => {
-                    return <MyCard headerText={title} bodyText={body}/>
+                {arrayCards.map(({title, body, id}: ICardsDataDTO) => {
+                    return <MyCard headerText={title} bodyText={body} key={id}/>
                 })}
             </Container>
             <MyModal
