@@ -1,4 +1,4 @@
-import React, {ChangeEvent, FormEvent} from 'react';
+import React, {ChangeEvent, FormEvent, useState} from 'react';
 import {v4} from 'uuid';
 import {makeStyles} from "@material-ui/core/styles";
 import {Button, Modal, TextField} from "@material-ui/core";
@@ -7,10 +7,6 @@ import ICardsDataDTO from "../../models/ICardsDataDTO";
 interface IModalProps {
     isOpen: boolean;
     handleClose: () => void;
-    cardHeaderText: string;
-    setCardHeaderText: React.Dispatch<React.SetStateAction<string>>;
-    cardBodyText: string;
-    setCardBodyText: React.Dispatch<React.SetStateAction<string>>;
     cards: ICardsDataDTO[];
 }
 
@@ -43,14 +39,12 @@ const useStyles = makeStyles({
 const MyModal = ({
                      isOpen,
                      handleClose,
-                     cardHeaderText,
-                     setCardHeaderText,
-                     cardBodyText,
-                     setCardBodyText,
                      cards
                  }: IModalProps) => {
 
     const classes = useStyles();
+    const [cardHeaderText, setCardHeaderText] = useState<string>('')
+    const [cardBodyText, setCardBodyText] = useState<string>('')
 
     const submitHandler = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
