@@ -1,4 +1,5 @@
 import React, {ChangeEvent, FormEvent} from 'react';
+import {v4} from 'uuid';
 import {Button, Modal, TextField} from "@material-ui/core";
 import ICardsDataDTO from "../../models/ICardsDataDTO";
 import {makeStyles} from "@material-ui/core/styles";
@@ -11,6 +12,7 @@ interface IModalProps {
     cardBodyText: string;
     setCardBodyText: React.Dispatch<React.SetStateAction<string>>;
     cards: ICardsDataDTO[];
+    setCards: React.Dispatch<React.SetStateAction<ICardsDataDTO[]>>;
 }
 
 const useStyles = makeStyles({
@@ -46,18 +48,14 @@ const MyModal = ({
                      setCardHeaderText,
                      cardBodyText,
                      setCardBodyText,
-                     cards
+                     cards,
+                     setCards
                  }: IModalProps) => {
 
     const classes = useStyles();
     const submitHandler = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         postData();
-        // cards.push({
-        //     title: cardHeaderText,
-        //     body: cardBodyText,
-        //     id: v4()
-        // })
         setCardHeaderText("")
         setCardBodyText("")
         handleClose();
@@ -85,9 +83,9 @@ const MyModal = ({
                 return response.json()
             })
             .then((json) => {
-                cards.push(json)
-                console.log(cards)
-            })
+                json.id = v4();
+                setCards(prevState => [...prevState, json])
+            }).catch(e => console.error(e))
     }
 
     return (

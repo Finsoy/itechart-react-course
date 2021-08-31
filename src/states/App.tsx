@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import {Button, Container, Typography} from "@material-ui/core";
+import {Button, Container} from "@material-ui/core";
 import MyCard from "../components/MyCard/MyCard";
 import Header from "../components/Header/Header";
 import MyModal from "./MyModal/MyModal";
 import ICardsDataDTO from "../models/ICardsDataDTO";
-import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Pagination from "../components/Pagination/Pagination";
 
 const API_URL = "https://jsonplaceholder.typicode.com/posts";
-const LIMIT_POSTS = 10;
-let maxPages = 0;
+const cardsPerPage = 8;
+const LIMIT_CARDS = 10;
 
 const useStyles = makeStyles({
     cardContainer: {
@@ -26,13 +26,6 @@ const useStyles = makeStyles({
         margin: "1rem auto",
         display: "flex",
         justifyContent: "center"
-    },
-    navigateBtn: {
-        margin: "1rem",
-        backgroundColor: "transparent",
-        border: "none",
-        outline: "none",
-        cursor: "pointer",
     }
 });
 
@@ -42,62 +35,43 @@ const App = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [cards, setCards] = useState<ICardsDataDTO[]>([])
     const [pageNumber, setPageNumber] = useState<number>(1)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [maxPages, setMaxPages] = useState<number>(0)
     const classes = useStyles();
 
-    async function fetchData() {
-        let data: ICardsDataDTO[] = [];
-        const response = await fetch(`${API_URL}?_page=${pageNumber}&_limit=${LIMIT_POSTS}`)
-        await response.json().then(res => {
-            data = res
-        })
-        console.log(data)
-        setCards(data)
-    }
+    const indexOfLastCard = pageNumber * cardsPerPage;
+    const indexOfFirstCard = indexOfLastCard - cardsPerPage;
+    const currentArrayCards = cards.slice(indexOfFirstCard, indexOfLastCard)
 
     async function fetchAllData() {
-        const response = await fetch(`${API_URL}`)
-        if (pageNumber === 1) {
-            await response.json().then(res => maxPages = res.length / LIMIT_POSTS)
-        }
+        setIsLoading(true)
+        const response = await fetch(`${API_URL}?_limit=${LIMIT_CARDS}`)
+        const allCards: ICardsDataDTO[] = await response.json();
+        setMaxPages(Math.ceil(allCards.length / cardsPerPage));
+        setCards(allCards)
+        setIsLoading(false)
     }
 
     useEffect(() => {
-        fetchAllData()
-        fetchData()
+        fetchAllData();
     }, [])
 
     useEffect(() => {
-        fetchData()
-    }, [pageNumber])
-
-    const handleOpen = () => {
-        setIsOpen(true);
-    };
-
-    const handleClose = () => {
-        setIsOpen(false);
-    };
-
-    const handleClick = () => {
-        handleOpen()
-    }
-    const prevHandleClick = () => {
-        setPageNumber(pageNumber - 1)
-    }
-    const nextHandleClick = () => {
-        setPageNumber(pageNumber + 1)
-    }
+        setMaxPages(Math.ceil(cards.length / cardsPerPage));
+    }, [cards])
 
 
     return (
         <div>
             <Header/>
-            <Button variant="contained" color="primary" onClick={handleClick} className={classes.addCardBtn}>
+            <Button variant="contained" color="primary" onClick={() => setIsOpen(true)} className={classes.addCardBtn}>
                 Add card
             </Button>
             <Container maxWidth="lg" className={classes.cardContainer}>
+                {isLoading && <LinearProgress/>}
+                <Pagination pageNumber={pageNumber} setPageNumber={setPageNumber} maxPages={maxPages}/>
                 <main className={classes.main}>
-                    {cards.map(({title, body, id}) => {
+                    {currentArrayCards.map(({title, body, id}) => {
                         return <MyCard
                             headerText={title}
                             bodyText={body}
@@ -111,26 +85,17 @@ const App = () => {
                         />
                     })}
                 </main>
-                <footer>
-                    <button className={classes.navigateBtn} onClick={prevHandleClick}>
-                        <NavigateBeforeIcon/>
-                    </button>
-                    <button className={classes.navigateBtn} onClick={nextHandleClick}>
-                        <NavigateNextIcon/>
-                    </button>
-                    <Typography component="span" color="primary">
-                        Current page {pageNumber} Max page {maxPages}
-                    </Typography>
-                </footer>
             </Container>
             <MyModal
                 isOpen={isOpen}
-                handleClose={handleClose}
+                handleClose={() => setIsOpen(false)}
                 cardHeaderText={cardHeaderText}
                 setCardHeaderText={setCardHeaderText}
                 cardBodyText={cardBodyText}
                 setCardBodyText={setCardBodyText}
-                cards={cards}/>
+                cards={cards}
+                setCards={setCards}
+            />
         </div>
     );
 };
