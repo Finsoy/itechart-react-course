@@ -26,23 +26,11 @@ const App = () => {
     const [cards, setCards] = useState<ICardsDataDTO[]>(arrayCards)
     const classes = useStyles();
 
-    const handleOpen = () => {
-        setIsOpen(true);
-    };
-
-    const handleClose = () => {
-        setIsOpen(false);
-    };
-
-    const handleClick = () => {
-        handleOpen()
-    }
-
 
     return (
         <div>
             <Header/>
-            <Button variant="contained" color="primary" onClick={handleClick} className={classes.addCardBtn}>
+            <Button variant="contained" color="primary" onClick={() => {setIsOpen(true)}} className={classes.addCardBtn}>
                 Add card
             </Button>
             <Container maxWidth="lg" className={classes.cardContainer}>
@@ -62,7 +50,7 @@ const App = () => {
             </Container>
             <MyModal
                 isOpen={isOpen}
-                handleClose={handleClose}
+                handleClose={() => {setIsOpen(false)}}
                 cardHeaderText={cardHeaderText}
                 setCardHeaderText={setCardHeaderText}
                 cardBodyText={cardBodyText}

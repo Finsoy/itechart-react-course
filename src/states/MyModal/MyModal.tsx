@@ -51,6 +51,7 @@ const MyModal = ({
                  }: IModalProps) => {
 
     const classes = useStyles();
+
     const submitHandler = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         cards.push({
