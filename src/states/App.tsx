@@ -22,6 +22,7 @@ const useStyles = makeStyles({
 const App = () => {
     const [cards] = useState<ICardsDataDTO[]>(arrayCards)
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [cards, setCards] = useState<ICardsDataDTO[]>(arrayCards)
     const classes = useStyles();
 
     return (
@@ -32,12 +33,26 @@ const App = () => {
             </Button>
             <Container maxWidth="lg" className={classes.cardContainer}>
                 {cards.map(({title, body, id}) => {
-                    return <MyCard headerText={title} bodyText={body} key={id}/>
+                    return <MyCard
+                        headerText={title}
+                        bodyText={body}
+                        id={id}
+                        setCards={setCards}
+                        cardHeaderText={cardHeaderText}
+                        setCardHeaderText={setCardHeaderText}
+                        cardBodyText={cardBodyText}
+                        setCardBodyText={setCardBodyText}
+                        key={id}
+                    />
                 })}
             </Container>
             <MyModal
                 isOpen={isOpen}
                 handleClose={() => {setIsOpen(false)}}
+                cardHeaderText={cardHeaderText}
+                setCardHeaderText={setCardHeaderText}
+                cardBodyText={cardBodyText}
+                setCardBodyText={setCardBodyText}
                 cards={cards}/>
         </div>
     );
