@@ -20,10 +20,14 @@ const useStyles = makeStyles({
 });
 
 const App = () => {
-    const [cards] = useState<ICardsDataDTO[]>(arrayCards)
+    const [cardHeaderText, setCardHeaderText] = useState<string>('')
+    const [cardBodyText, setCardBodyText] = useState<string>('')
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [cards, setCards] = useState<ICardsDataDTO[]>(arrayCards)
+    const [isEdit, setIsEdit] = useState<boolean>(false)
+
     const classes = useStyles();
+
 
     return (
         <div>
@@ -43,6 +47,8 @@ const App = () => {
                         cardBodyText={cardBodyText}
                         setCardBodyText={setCardBodyText}
                         key={id}
+                        isEdit={isEdit}
+                        setIsEdit={setIsEdit}
                     />
                 })}
             </Container>

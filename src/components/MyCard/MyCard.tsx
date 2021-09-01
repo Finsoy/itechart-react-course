@@ -12,6 +12,8 @@ interface ICardProps {
     setCardHeaderText: React.Dispatch<React.SetStateAction<string>>;
     cardBodyText: string;
     setCardBodyText: React.Dispatch<React.SetStateAction<string>>;
+    isEdit: boolean;
+    setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const useStyles = makeStyles({
@@ -56,10 +58,11 @@ const MyCard = ({
                     cardHeaderText,
                     setCardBodyText,
                     setCardHeaderText,
+                    isEdit,
+                    setIsEdit
                 }: ICardProps) => {
 
     const classes = useStyles();
-    const [isEdit, setIsEdit] = useState<boolean>(false)
     const [title, setHeaderText] = useState<string>(headerText)
     const [body, setBodyText] = useState<string>(bodyText)
 
