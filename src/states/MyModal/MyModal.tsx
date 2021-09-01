@@ -43,10 +43,6 @@ const useStyles = makeStyles({
 const MyModal = ({
                      isOpen,
                      handleClose,
-                     cardHeaderText,
-                     setCardHeaderText,
-                     cardBodyText,
-                     setCardBodyText,
                      cards
                  }: IModalProps) => {
 

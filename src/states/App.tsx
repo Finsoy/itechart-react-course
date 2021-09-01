@@ -20,12 +20,10 @@ const useStyles = makeStyles({
 });
 
 const App = () => {
-    const [cardHeaderText, setCardHeaderText] = useState<string>('')
-    const [cardBodyText, setCardBodyText] = useState<string>('')
+    const [cards] = useState<ICardsDataDTO[]>(arrayCards)
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [cards, setCards] = useState<ICardsDataDTO[]>(arrayCards)
     const classes = useStyles();
-
 
     return (
         <div>
