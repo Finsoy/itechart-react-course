@@ -6,6 +6,7 @@ import Header from "../components/Header/Header";
 import MyModal from "./MyModal/MyModal";
 import arrayCards from '../data/arrayCards.json'
 import ICardsDataDTO from "../models/ICardsDataDTO";
+import EditButton from "../components/EditButton/EditButton";
 
 const useStyles = makeStyles({
     cardContainer: {
@@ -20,11 +21,11 @@ const useStyles = makeStyles({
 });
 
 const App = () => {
+    const classes = useStyles();
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [isSave, setIsSave] = useState<boolean>(false);
     const [cards, setCards] = useState<ICardsDataDTO[]>(arrayCards)
     const [globalIsEdit, setGlobalIsEdit] = useState<boolean>(false)
-
-    const classes = useStyles();
 
 
     return (
@@ -35,16 +36,7 @@ const App = () => {
             }} className={classes.addCardBtn}>
                 Add card
             </Button>
-            {globalIsEdit ? <Button variant="contained" color="secondary" onClick={() => {
-                    setGlobalIsEdit(!globalIsEdit)
-                }} className={classes.addCardBtn}>
-                    Cancel edit all cards
-                </Button>
-                : <Button variant="contained" color="primary" onClick={() => {
-                    setGlobalIsEdit(!globalIsEdit)
-                }} className={classes.addCardBtn}>
-                    Edit all cards
-                </Button>}
+            <EditButton globalIsEdit={globalIsEdit} setIsSave={setIsSave} setGlobalIsEdit={setGlobalIsEdit}/>
             <Container maxWidth="lg" className={classes.cardContainer}>
                 {cards.map(({title, body, id}) => {
                     return <MyCard
@@ -54,6 +46,7 @@ const App = () => {
                         setCards={setCards}
                         key={id}
                         globalIsEdit={globalIsEdit}
+                        isSave={isSave}
                     />
                 })}
             </Container>
