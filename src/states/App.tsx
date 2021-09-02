@@ -20,11 +20,9 @@ const useStyles = makeStyles({
 });
 
 const App = () => {
-    const [cardHeaderText, setCardHeaderText] = useState<string>('')
-    const [cardBodyText, setCardBodyText] = useState<string>('')
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [cards, setCards] = useState<ICardsDataDTO[]>(arrayCards)
-    const [isEdit, setIsEdit] = useState<boolean>(false)
+    const [globalIsEdit, setGlobalIsEdit] = useState<boolean>(false)
 
     const classes = useStyles();
 
@@ -32,9 +30,21 @@ const App = () => {
     return (
         <div>
             <Header/>
-            <Button variant="contained" color="primary" onClick={() => {setIsOpen(true)}} className={classes.addCardBtn}>
+            <Button variant="contained" color="primary" onClick={() => {
+                setIsOpen(true)
+            }} className={classes.addCardBtn}>
                 Add card
             </Button>
+            {globalIsEdit ? <Button variant="contained" color="secondary" onClick={() => {
+                    setGlobalIsEdit(!globalIsEdit)
+                }} className={classes.addCardBtn}>
+                    Cancel edit all cards
+                </Button>
+                : <Button variant="contained" color="primary" onClick={() => {
+                    setGlobalIsEdit(!globalIsEdit)
+                }} className={classes.addCardBtn}>
+                    Edit all cards
+                </Button>}
             <Container maxWidth="lg" className={classes.cardContainer}>
                 {cards.map(({title, body, id}) => {
                     return <MyCard
@@ -42,23 +52,16 @@ const App = () => {
                         bodyText={body}
                         id={id}
                         setCards={setCards}
-                        cardHeaderText={cardHeaderText}
-                        setCardHeaderText={setCardHeaderText}
-                        cardBodyText={cardBodyText}
-                        setCardBodyText={setCardBodyText}
                         key={id}
-                        isEdit={isEdit}
-                        setIsEdit={setIsEdit}
+                        globalIsEdit={globalIsEdit}
                     />
                 })}
             </Container>
             <MyModal
                 isOpen={isOpen}
-                handleClose={() => {setIsOpen(false)}}
-                cardHeaderText={cardHeaderText}
-                setCardHeaderText={setCardHeaderText}
-                cardBodyText={cardBodyText}
-                setCardBodyText={setCardBodyText}
+                handleClose={() => {
+                    setIsOpen(false)
+                }}
                 cards={cards}/>
         </div>
     );

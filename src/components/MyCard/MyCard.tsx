@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Button, Card, CardActionArea, CardContent, TextField, Typography} from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import ICardsDataDTO from "../../models/ICardsDataDTO";
@@ -8,12 +8,7 @@ interface ICardProps {
     bodyText: string;
     id: string;
     setCards: React.Dispatch<React.SetStateAction<ICardsDataDTO[]>>;
-    cardHeaderText: string;
-    setCardHeaderText: React.Dispatch<React.SetStateAction<string>>;
-    cardBodyText: string;
-    setCardBodyText: React.Dispatch<React.SetStateAction<string>>;
-    isEdit: boolean;
-    setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
+    globalIsEdit: boolean;
 }
 
 const useStyles = makeStyles({
@@ -54,17 +49,21 @@ const MyCard = ({
                     bodyText,
                     id,
                     setCards,
-                    cardBodyText,
-                    cardHeaderText,
-                    setCardBodyText,
-                    setCardHeaderText,
-                    isEdit,
-                    setIsEdit
+                    globalIsEdit,
                 }: ICardProps) => {
 
     const classes = useStyles();
-    const [title, setHeaderText] = useState<string>(headerText)
-    const [body, setBodyText] = useState<string>(bodyText)
+    const [title, setTitle] = useState<string>(headerText)
+    const [body, setBody] = useState<string>(bodyText)
+    const [isEdit, setIsEdit] = useState<boolean>(globalIsEdit)
+    const [prevHeaderText, setPrevHeaderText] = useState<string>(headerText)
+    const [prevBodyText, setPrevBodyText] = useState<string>(bodyText)
+
+    useEffect(() => {
+        if (globalIsEdit !== isEdit) {
+            setIsEdit(globalIsEdit)
+        }
+    }, [globalIsEdit])
 
 
     const handleDeleteBtnClick = (id: string) => {
@@ -74,35 +73,39 @@ const MyCard = ({
     }
 
     const handleSaveClick = () => {
-        setHeaderText(cardHeaderText);
-        setBodyText(cardBodyText)
-        setCardHeaderText("")
-        setCardBodyText("")
+        setPrevHeaderText(title)
+        setPrevBodyText(body)
+        setIsEdit(false)
+    }
+
+    const handleCancelClick = () => {
+        setTitle(prevHeaderText);
+        setBody(prevBodyText);
         setIsEdit(false)
     }
 
     const handleTitle = (e: ChangeEvent<HTMLInputElement>) => {
-        setCardHeaderText(e.target.value);
+        setTitle(e.target.value);
     }
     const handleBody = (e: ChangeEvent<HTMLInputElement>) => {
-        setCardBodyText(e.target.value);
+        setBody(e.target.value);
     }
 
     return (
         <Card className={classes.card}>
-            <button className={classes.cardBtn} onClick={() => {
+            {isEdit && <button className={classes.cardBtn} onClick={() => {
                 handleDeleteBtnClick(id)
             }}>
                     <span className="material-icons">
                         clear
                     </span>
-            </button>
+            </button>}
             <CardActionArea>
                 <CardContent>
                     {isEdit ? <TextField required id="title"
                                          label="Title text"
                                          className={classes.input}
-                                         value={cardHeaderText}
+                                         value={title}
                                          onChange={handleTitle}/>
                         : <Typography variant="h5" color="primary" gutterBottom>
                             {title}
@@ -110,7 +113,7 @@ const MyCard = ({
                     {isEdit ? <TextField required id="title"
                                          label="Title text"
                                          className={classes.input}
-                                         value={cardBodyText}
+                                         value={body}
                                          onChange={handleBody}/>
                         : <Typography variant="body1" color="primary" gutterBottom>
                             {body}
@@ -118,18 +121,14 @@ const MyCard = ({
                 </CardContent>
             </CardActionArea>
             <footer className={classes.footer}>
-                {isEdit ?
-                    <Button variant="contained" color="primary" className={classes.saveBtn} onClick={handleSaveClick}>
-                        Save!
-                    </Button>
-                    : <button className={classes.cardBtn} onClick={() => {
-                        setIsEdit(true)
-                    }}>
-                    <span className="material-icons">
-                        edit
-                    </span>
-                    </button>
-                }
+                {isEdit &&
+                <Button variant="contained" color="primary" onClick={handleSaveClick}>
+                    Save
+                </Button>}
+                {isEdit &&
+                <Button variant="contained" color="secondary" onClick={handleCancelClick}>
+                    Cancel
+                </Button>}
             </footer>
         </Card>
     );
