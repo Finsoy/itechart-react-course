@@ -3,9 +3,8 @@ import {CSSTransition, TransitionGroup} from "react-transition-group";
 import {Route, Switch, useLocation} from "react-router-dom";
 import MainPage from "../pages/MainPage/MainPage";
 import CardsList from "../pages/CardsList/CardsList";
-import IMainProps from "../../models/IMainProps";
 
-const Main = ({isLoading, cards, setCards, maxPages}: IMainProps) => {
+const Main = () => {
     const location = useLocation();
     return (
         <TransitionGroup>
@@ -15,10 +14,7 @@ const Main = ({isLoading, cards, setCards, maxPages}: IMainProps) => {
                         <MainPage/>
                     </Route>
                     <Route exact path="/cards">
-                        <CardsList isLoading={isLoading}
-                                   cards={cards}
-                                   setCards={setCards}
-                                   maxPages={maxPages}/>
+                        <CardsList/>
                     </Route>
                     <Route path="*">
                         <MainPage/>
