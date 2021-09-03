@@ -34,6 +34,12 @@ const useStyles = makeStyles({
     input: {
         margin: ".3rem",
     },
+    error: {
+        border: "2px solid red"
+    },
+    errorText: {
+        color: "red"
+    }
 });
 
 const MyCard = ({
@@ -42,7 +48,7 @@ const MyCard = ({
                     id,
                     setCards,
                     globalIsEdit,
-                    isSave
+                    isSave,
                 }: ICardProps) => {
 
         const classes = useStyles();
@@ -50,6 +56,8 @@ const MyCard = ({
         const [body, setBody] = useState<string>(bodyText)
         const [prevHeaderText, setPrevHeaderText] = useState<string>(headerText)
         const [prevBodyText, setPrevBodyText] = useState<string>(bodyText)
+        const [isError, setIsError] = useState<boolean>(false)
+
 
         useEffect(() => {
             if (isSave) {
@@ -69,9 +77,19 @@ const MyCard = ({
 
 
         const handleTitle = (e: ChangeEvent<HTMLInputElement>) => {
+            if (e.target.value.trim().length === 0) {
+                setIsError(true)
+            } else {
+                setIsError(false)
+            }
             setTitle(e.target.value);
         }
         const handleBody = (e: ChangeEvent<HTMLInputElement>) => {
+            if (e.target.value.trim().length === 0) {
+                setIsError(true)
+            } else {
+                setIsError(false)
+            }
             setBody(e.target.value);
         }
 
@@ -86,20 +104,25 @@ const MyCard = ({
                 </button>}
                 <CardActionArea>
                     <CardContent>
-                        {globalIsEdit ? <TextField required id="title"
-                                                   label="Title text"
-                                                   className={classes.input}
-                                                   value={title}
-                                                   onChange={handleTitle}/>
+                        {globalIsEdit ? <div><TextField required id="title"
+                                                        label="Title text"
+                                                        className={`${classes.input} ${isError && classes.error}`}
+                                                        value={title}
+                                                        onChange={handleTitle}/> {isError && <p
+                                className={classes.errorText}>This field can't be
+                                empty!</p>}</div>
                             : <Typography variant="h5" color="primary" gutterBottom>
                                 {title}
                             </Typography>}
-                        {globalIsEdit ? <TextField required id="title"
-                                                   label="Title text"
-                                                   className={classes.input}
-                                                   value={body}
-                                                   onChange={handleBody}/>
-                            : <Typography variant="body1" color="primary" gutterBottom>
+
+                        {globalIsEdit ? (<div><TextField required id="body"
+                                                         label="Body text"
+                                                         className={`${classes.input} ${isError && classes.error}`}
+                                                         value={body}
+                                                         onChange={handleBody}/> {isError && <p
+                                className={classes.errorText}>This field can't be
+                                empty!</p>}</div>)
+                            : <Typography variant="h5" color="primary" gutterBottom>
                                 {body}
                             </Typography>}
                     </CardContent>
