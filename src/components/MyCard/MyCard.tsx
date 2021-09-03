@@ -1,5 +1,5 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import {Button, Card, CardActionArea, CardContent, TextField, Typography} from "@material-ui/core";
+import {Card, CardActionArea, CardContent, TextField, Typography} from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import ICardsDataDTO from "../../models/ICardsDataDTO";
 
@@ -9,6 +9,7 @@ interface ICardProps {
     id: string;
     setCards: React.Dispatch<React.SetStateAction<ICardsDataDTO[]>>;
     globalIsEdit: boolean;
+    isSave: boolean;
 }
 
 const useStyles = makeStyles({
@@ -33,12 +34,9 @@ const useStyles = makeStyles({
     input: {
         margin: ".3rem",
     },
-    footer: {
-        display: "flex",
-        justifyContent: "flex-end",
-    },
-    footerBtn: {
-        margin: "0 1rem .5rem 0"
+    errorText: {
+        color: "red",
+        fontWeight: "bold"
     }
 });
 
@@ -47,89 +45,91 @@ const MyCard = ({
                     bodyText,
                     id,
                     setCards,
-                    globalIsEdit
+                    globalIsEdit,
+                    isSave,
                 }: ICardProps) => {
 
-    const classes = useStyles();
-    const [title, setTitle] = useState<string>(headerText)
-    const [body, setBody] = useState<string>(bodyText)
-    const [isEdit, setIsEdit] = useState<boolean>(globalIsEdit)
-    const [prevHeaderText, setPrevHeaderText] = useState<string>(headerText)
-    const [prevBodyText, setPrevBodyText] = useState<string>(bodyText)
+        const classes = useStyles();
+        const [title, setTitle] = useState<string>(headerText)
+        const [body, setBody] = useState<string>(bodyText)
+        const [prevHeaderText, setPrevHeaderText] = useState<string>(headerText)
+        const [prevBodyText, setPrevBodyText] = useState<string>(bodyText)
+        const [isError, setIsError] = useState<boolean>(false)
 
+        useEffect(() => {
+            const check = () => {
+                if (isSave) {
+                    setPrevHeaderText(title)
+                    setPrevBodyText(body)
+                } else {
+                    setTitle(prevHeaderText);
+                    setBody(prevBodyText);
+                }
+            }
+            check()
+        }, [isSave])
 
-    const handleDeleteBtnClick = (id: string) => {
-        setCards((prevState => {
-            return prevState.filter((item) => item.id !== id);
-        }))
-    }
-
-    const handleSaveClick = () => {
-        setPrevHeaderText(title)
-        setPrevBodyText(body)
-        setIsEdit(false)
-    }
-
-    const handleCancelClick = () => {
-        setTitle(prevHeaderText);
-        setBody(prevBodyText);
-        setIsEdit(false)
-    }
-
-    const handleTitle = (e: ChangeEvent<HTMLInputElement>) => {
-        setTitle(e.target.value);
-    }
-    const handleBody = (e: ChangeEvent<HTMLInputElement>) => {
-        setBody(e.target.value);
-    }
-
-    useEffect(() => {
-        if (globalIsEdit !== isEdit) {
-            setIsEdit(globalIsEdit)
+        const handleDeleteBtnClick = (id: string) => {
+            setCards((prevState => {
+                return prevState.filter((item) => item.id !== id);
+            }))
         }
-    }, [globalIsEdit])
 
-    return (
-        <Card className={classes.card}>
-            {isEdit && <button className={classes.cardBtn} onClick={() => {
-                handleDeleteBtnClick(id)
-            }}>
+        const validate = (e: ChangeEvent<HTMLInputElement>) => {
+            if (e.target.value.trim().length === 0) {
+                setIsError(true)
+            } else {
+                setIsError(false)
+            }
+        }
+
+
+        const handleTitle = (e: ChangeEvent<HTMLInputElement>) => {
+            validate(e)
+            setTitle(e.target.value);
+        }
+        const handleBody = (e: ChangeEvent<HTMLInputElement>) => {
+            validate(e)
+            setBody(e.target.value);
+        }
+
+        return (
+            <Card className={classes.card}>
+                {globalIsEdit && <button className={classes.cardBtn} onClick={() => {
+                    handleDeleteBtnClick(id)
+                }}>
                     <span className="material-icons">
                         clear
                     </span>
-            </button>}
-            <CardActionArea>
-                <CardContent>
-                    {isEdit ? <TextField required id="title"
-                                         label="Title text"
-                                         className={classes.input}
-                                         value={title}
-                                         onChange={handleTitle}/>
-                        : <Typography variant="h5" color="primary" gutterBottom>
-                            {title}
-                        </Typography>}
-                    {isEdit ? <TextField required id="title"
-                                         label="Title text"
-                                         className={classes.input}
-                                         value={body}
-                                         onChange={handleBody}/>
-                        : <Typography variant="body1" color="primary" gutterBottom>
-                            {body}
-                        </Typography>}
-                </CardContent>
-            </CardActionArea>
-            <footer className={classes.footer}>
-                {isEdit &&
-                <Button variant="contained" color="primary" className={classes.footerBtn} onClick={handleSaveClick}>
-                    Save
-                </Button>}
-                {isEdit &&
-                <Button variant="contained" color="secondary" className={classes.footerBtn} onClick={handleCancelClick}>
-                    Cancel
-                </Button>}
-            </footer>
-        </Card>
-    );
-};
+                </button>}
+                <CardActionArea>
+                    <CardContent>
+                        {globalIsEdit ? <div><TextField required id="title"
+                                                        label="Title text"
+                                                        className={classes.input}
+                                                        value={title}
+                                                        onChange={handleTitle}/> {isError && <p
+                                className={classes.errorText}>This field can't be
+                                empty!</p>}</div>
+                            : <Typography variant="h5" color="primary" gutterBottom>
+                                Title: {title}
+                            </Typography>}
+
+                        {globalIsEdit ? (<div><TextField required id="body"
+                                                         label="Body text"
+                                                         className={classes.input}
+                                                         value={body}
+                                                         onChange={handleBody}/> {isError && <p
+                                className={classes.errorText}>This field can't be
+                                empty!</p>}</div>)
+                            : <Typography variant="h6" color="primary" gutterBottom>
+                                Body: {body}
+                            </Typography>}
+                    </CardContent>
+                </CardActionArea>
+            </Card>
+        );
+    }
+;
 
 export default MyCard;

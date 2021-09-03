@@ -7,6 +7,7 @@ import MyModal from "./MyModal/MyModal";
 import ICardsDataDTO from "../models/ICardsDataDTO";
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Pagination from "../components/Pagination/Pagination";
+import EditButton from "../components/EditButton/EditButton";
 
 const API_URL = "https://jsonplaceholder.typicode.com/posts";
 const cardsPerPage = 8;
@@ -32,6 +33,7 @@ const useStyles = makeStyles({
 const App = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [cards, setCards] = useState<ICardsDataDTO[]>([])
+    const [isSave, setIsSave] = useState<boolean>(false);
     const [globalIsEdit, setGlobalIsEdit] = useState<boolean>(false)
     const [pageNumber, setPageNumber] = useState<number>(1)
     const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -66,16 +68,7 @@ const App = () => {
             <Button variant="contained" color="primary" onClick={() => setIsOpen(true)} className={classes.addCardBtn}>
                 Add card
             </Button>
-            {globalIsEdit ? <Button variant="contained" color="secondary" onClick={() => {
-                    setGlobalIsEdit(!globalIsEdit)
-                }} className={classes.addCardBtn}>
-                    Cancel edit all cards
-                </Button>
-                : <Button variant="contained" color="primary" onClick={() => {
-                    setGlobalIsEdit(!globalIsEdit)
-                }} className={classes.addCardBtn}>
-                    Edit all cards
-                </Button>}
+            <EditButton globalIsEdit={globalIsEdit} setIsSave={setIsSave} setGlobalIsEdit={setGlobalIsEdit}/>
             <Container maxWidth="lg" className={classes.cardContainer}>
                 {isLoading && <LinearProgress/>}
                 <Pagination pageNumber={pageNumber} setPageNumber={setPageNumber} maxPages={maxPages}/>
@@ -88,6 +81,7 @@ const App = () => {
                             setCards={setCards}
                             globalIsEdit={globalIsEdit}
                             key={id}
+                            isSave={isSave}
                         />
                     })}
                 </main>
