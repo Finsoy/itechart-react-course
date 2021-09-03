@@ -34,11 +34,9 @@ const useStyles = makeStyles({
     input: {
         margin: ".3rem",
     },
-    error: {
-        border: "2px solid red"
-    },
     errorText: {
-        color: "red"
+        color: "red",
+        fontWeight: "bold"
     }
 });
 
@@ -58,15 +56,17 @@ const MyCard = ({
         const [prevBodyText, setPrevBodyText] = useState<string>(bodyText)
         const [isError, setIsError] = useState<boolean>(false)
 
-
         useEffect(() => {
-            if (isSave) {
-                setPrevHeaderText(title)
-                setPrevBodyText(body)
-            } else {
-                setTitle(prevHeaderText);
-                setBody(prevBodyText);
+            const check = () => {
+                if (isSave) {
+                    setPrevHeaderText(title)
+                    setPrevBodyText(body)
+                } else {
+                    setTitle(prevHeaderText);
+                    setBody(prevBodyText);
+                }
             }
+            check()
         }, [isSave])
 
         const handleDeleteBtnClick = (id: string) => {
@@ -75,21 +75,21 @@ const MyCard = ({
             }))
         }
 
-
-        const handleTitle = (e: ChangeEvent<HTMLInputElement>) => {
+        const validate = (e: ChangeEvent<HTMLInputElement>) => {
             if (e.target.value.trim().length === 0) {
                 setIsError(true)
             } else {
                 setIsError(false)
             }
+        }
+
+
+        const handleTitle = (e: ChangeEvent<HTMLInputElement>) => {
+            validate(e)
             setTitle(e.target.value);
         }
         const handleBody = (e: ChangeEvent<HTMLInputElement>) => {
-            if (e.target.value.trim().length === 0) {
-                setIsError(true)
-            } else {
-                setIsError(false)
-            }
+            validate(e)
             setBody(e.target.value);
         }
 
@@ -106,7 +106,7 @@ const MyCard = ({
                     <CardContent>
                         {globalIsEdit ? <div><TextField required id="title"
                                                         label="Title text"
-                                                        className={`${classes.input} ${isError && classes.error}`}
+                                                        className={classes.input}
                                                         value={title}
                                                         onChange={handleTitle}/> {isError && <p
                                 className={classes.errorText}>This field can't be
@@ -117,7 +117,7 @@ const MyCard = ({
 
                         {globalIsEdit ? (<div><TextField required id="body"
                                                          label="Body text"
-                                                         className={`${classes.input} ${isError && classes.error}`}
+                                                         className={classes.input}
                                                          value={body}
                                                          onChange={handleBody}/> {isError && <p
                                 className={classes.errorText}>This field can't be
