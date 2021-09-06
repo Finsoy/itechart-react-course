@@ -90,8 +90,7 @@ const App = () => {
                 isOpen={isOpen}
                 handleClose={() => setIsOpen(false)}
                 cards={cards}
-                setCards={setCards}
-            />
+                setCards={setCards}/>
         </div>
     );
 };
