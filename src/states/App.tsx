@@ -6,6 +6,7 @@ import Header from "../components/Header/Header";
 import MyModal from "./MyModal/MyModal";
 import arrayCards from '../data/arrayCards.json'
 import ICardsDataDTO from "../models/ICardsDataDTO";
+import EditButton from "../components/EditButton/EditButton";
 
 const useStyles = makeStyles({
     cardContainer: {
@@ -20,24 +21,40 @@ const useStyles = makeStyles({
 });
 
 const App = () => {
-    const [cards] = useState<ICardsDataDTO[]>(arrayCards)
-    const [isOpen, setIsOpen] = useState<boolean>(false);
     const classes = useStyles();
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [isSave, setIsSave] = useState<boolean>(false);
+    const [cards, setCards] = useState<ICardsDataDTO[]>(arrayCards)
+    const [globalIsEdit, setGlobalIsEdit] = useState<boolean>(false)
+
 
     return (
         <div>
             <Header/>
-            <Button variant="contained" color="primary" onClick={() => {setIsOpen(true)}} className={classes.addCardBtn}>
+            <Button variant="contained" color="primary" onClick={() => {
+                setIsOpen(true)
+            }} className={classes.addCardBtn}>
                 Add card
             </Button>
+            <EditButton globalIsEdit={globalIsEdit} setIsSave={setIsSave} setGlobalIsEdit={setGlobalIsEdit}/>
             <Container maxWidth="lg" className={classes.cardContainer}>
                 {cards.map(({title, body, id}) => {
-                    return <MyCard headerText={title} bodyText={body} key={id}/>
+                    return <MyCard
+                        headerText={title}
+                        bodyText={body}
+                        id={id}
+                        setCards={setCards}
+                        key={id}
+                        globalIsEdit={globalIsEdit}
+                        isSave={isSave}
+                    />
                 })}
             </Container>
             <MyModal
                 isOpen={isOpen}
-                handleClose={() => {setIsOpen(false)}}
+                handleClose={() => {
+                    setIsOpen(false)
+                }}
                 cards={cards}/>
         </div>
     );

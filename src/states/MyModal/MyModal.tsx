@@ -1,8 +1,8 @@
 import React, {ChangeEvent, FormEvent, useState} from 'react';
 import {v4} from 'uuid';
-import {makeStyles} from "@material-ui/core/styles";
 import {Button, Modal, TextField} from "@material-ui/core";
 import ICardsDataDTO from "../../models/ICardsDataDTO";
+import {makeStyles} from "@material-ui/core/styles";
 
 interface IModalProps {
     isOpen: boolean;
@@ -51,7 +51,7 @@ const MyModal = ({
         cards.push({
             title: cardHeaderText,
             body: cardBodyText,
-            id: v4(),
+            id: v4()
         })
         setCardHeaderText("")
         setCardBodyText("")
