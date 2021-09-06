@@ -40,7 +40,6 @@ const useStyles = makeStyles({
 const MyModal = ({
                      isOpen,
                      handleClose,
-                     cards,
                      setCards
                  }: IModalProps) => {
 

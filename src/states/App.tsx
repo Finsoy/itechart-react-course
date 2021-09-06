@@ -10,7 +10,7 @@ import Pagination from "../components/Pagination/Pagination";
 import EditButton from "../components/EditButton/EditButton";
 
 const API_URL = "https://jsonplaceholder.typicode.com/posts";
-const cardsPerPage = 8;
+const CARDS_PER_PAGE = 8;
 const LIMIT_CARDS = 10;
 
 const useStyles = makeStyles({
@@ -40,15 +40,15 @@ const App = () => {
     const [maxPages, setMaxPages] = useState<number>(0)
     const classes = useStyles();
 
-    const indexOfLastCard = pageNumber * cardsPerPage;
-    const indexOfFirstCard = indexOfLastCard - cardsPerPage;
+    const indexOfLastCard = pageNumber * CARDS_PER_PAGE;
+    const indexOfFirstCard = indexOfLastCard - CARDS_PER_PAGE;
     const currentArrayCards = cards.slice(indexOfFirstCard, indexOfLastCard)
 
     async function fetchAllData() {
         setIsLoading(true)
         const response = await fetch(`${API_URL}?_limit=${LIMIT_CARDS}`)
         const allCards: ICardsDataDTO[] = await response.json();
-        setMaxPages(Math.ceil(allCards.length / cardsPerPage));
+        setMaxPages(Math.ceil(allCards.length / CARDS_PER_PAGE));
         setCards(allCards)
         setIsLoading(false)
     }
@@ -58,7 +58,7 @@ const App = () => {
     }, [])
 
     useEffect(() => {
-        setMaxPages(Math.ceil(cards.length / cardsPerPage));
+        setMaxPages(Math.ceil(cards.length / CARDS_PER_PAGE));
     }, [cards])
 
 
