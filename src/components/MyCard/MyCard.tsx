@@ -37,6 +37,10 @@ const useStyles = makeStyles({
     errorText: {
         color: "red",
         fontWeight: "bold"
+    },
+    bodyText: {
+        fontSize: "16px",
+        fontWeight: "normal"
     }
 });
 
@@ -54,7 +58,8 @@ const MyCard = ({
         const [body, setBody] = useState<string>(bodyText)
         const [prevHeaderText, setPrevHeaderText] = useState<string>(headerText)
         const [prevBodyText, setPrevBodyText] = useState<string>(bodyText)
-        const [isError, setIsError] = useState<boolean>(false)
+        const [isErrorHeader, setIsErrorHeader] = useState<boolean>(false)
+        const [isErrorBody, setIsErrorBody] = useState<boolean>(false)
 
         useEffect(() => {
             const check = () => {
@@ -75,21 +80,20 @@ const MyCard = ({
             }))
         }
 
-        const validate = (e: ChangeEvent<HTMLInputElement>) => {
-            if (e.target.value.trim().length === 0) {
-                setIsError(true)
-            } else {
-                setIsError(false)
-            }
-        }
-
-
         const handleTitle = (e: ChangeEvent<HTMLInputElement>) => {
-            validate(e)
+            if (e.target.value.trim().length === 0) {
+                setIsErrorHeader(true)
+            } else {
+                setIsErrorHeader(false)
+            }
             setTitle(e.target.value);
         }
         const handleBody = (e: ChangeEvent<HTMLInputElement>) => {
-            validate(e)
+            if (e.target.value.trim().length === 0) {
+                setIsErrorBody(true)
+            } else {
+                setIsErrorBody(false)
+            }
             setBody(e.target.value);
         }
 
@@ -108,22 +112,22 @@ const MyCard = ({
                                                         label="Title text"
                                                         className={classes.input}
                                                         value={title}
-                                                        onChange={handleTitle}/> {isError && <p
+                                                        onChange={handleTitle}/> {isErrorHeader && <p
                                 className={classes.errorText}>This field can't be
                                 empty!</p>}</div>
                             : <Typography variant="h5" color="primary" gutterBottom>
-                                Title: {title}
+                                {title}
                             </Typography>}
 
                         {globalIsEdit ? (<div><TextField required id="body"
                                                          label="Body text"
                                                          className={classes.input}
                                                          value={body}
-                                                         onChange={handleBody}/> {isError && <p
+                                                         onChange={handleBody}/> {isErrorBody && <p
                                 className={classes.errorText}>This field can't be
                                 empty!</p>}</div>)
-                            : <Typography variant="h6" color="primary" gutterBottom>
-                                Body: {body}
+                            : <Typography variant="h6" color="primary" className={classes.bodyText} gutterBottom>
+                                {body}
                             </Typography>}
                     </CardContent>
                 </CardActionArea>
