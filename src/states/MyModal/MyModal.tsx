@@ -8,6 +8,7 @@ interface IModalProps {
     isOpen: boolean;
     handleClose: () => void;
     cards: ICardsDataDTO[];
+    setCards: React.Dispatch<React.SetStateAction<ICardsDataDTO[]>>;
 }
 
 const useStyles = makeStyles({
@@ -39,7 +40,7 @@ const useStyles = makeStyles({
 const MyModal = ({
                      isOpen,
                      handleClose,
-                     cards
+                     setCards
                  }: IModalProps) => {
 
     const classes = useStyles();
@@ -48,11 +49,7 @@ const MyModal = ({
 
     const submitHandler = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        cards.push({
-            title: cardHeaderText,
-            body: cardBodyText,
-            id: v4()
-        })
+        postData();
         setCardHeaderText("")
         setCardBodyText("")
         handleClose();
@@ -62,6 +59,27 @@ const MyModal = ({
     }
     const handleBody = (e: ChangeEvent<HTMLInputElement>) => {
         setCardBodyText(e.target.value);
+    }
+
+    const postData = async () => {
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify({
+                title: cardHeaderText,
+                body: cardBodyText,
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => {
+                console.log(`STATUS ${response.status}`)
+                return response.json()
+            })
+            .then((json) => {
+                json.id = v4();
+                setCards(prevState => [...prevState, json])
+            }).catch(e => console.error(e))
     }
 
     return (
