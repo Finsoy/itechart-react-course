@@ -1,30 +1,25 @@
 import React from 'react';
-import {NavLink} from 'react-router-dom'
 import {makeStyles} from "@material-ui/core/styles";
 
 const useStyles = makeStyles({
-    mainLink: {
+    error: {
         display: "flex",
         justifyContent: "center",
         fontSize: "36px",
-        color: "#3f51b5",
+        color: "#f44336",
         textDecoration: "none",
         margin: "1rem auto",
     },
 });
 
-
-const MainPage = () => {
+const ErrorPage = () => {
     const classes = useStyles();
 
     return (
-        <h1>
-            <NavLink to="/cards" className={classes.mainLink}>
-                Click to see all cards
-            </NavLink>
+        <h1 className={classes.error}>
+          Error 404 page was not found
         </h1>
-
     );
 };
 
-export default MainPage;
+export default ErrorPage;

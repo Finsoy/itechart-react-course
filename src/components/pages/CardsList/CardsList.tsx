@@ -45,16 +45,17 @@ const CardsList = () => {
     const indexOfFirstCard = indexOfLastCard - cardsPerPage;
     const currentArrayCards = cards.slice(indexOfFirstCard, indexOfLastCard)
 
-    async function fetchAllData() {
-        setIsLoading(true)
-        const response = await fetch(`${API_URL}?_limit=${LIMIT_CARDS}`)
-        const allCards: ICardsDataDTO[] = await response.json();
-        setMaxPages(Math.ceil(allCards.length / cardsPerPage));
-        setCards(allCards)
-        setIsLoading(false)
-    }
 
     useEffect(() => {
+        async function fetchAllData() {
+            setIsLoading(true)
+            const response = await fetch(`${API_URL}?_limit=${LIMIT_CARDS}`)
+            const allCards: ICardsDataDTO[] = await response.json();
+            setMaxPages(Math.ceil(allCards.length / cardsPerPage));
+            setCards(allCards)
+            setIsLoading(false)
+        }
+
         fetchAllData();
     }, [])
 
