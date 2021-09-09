@@ -7,7 +7,7 @@ import MyModal from "../../../states/MyModal/MyModal";
 import {makeStyles} from "@material-ui/core/styles";
 import EditButton from "../../EditButton/EditButton";
 import ICardsDataDTO from "../../../models/ICardsDataDTO";
-import MyTabs from "../../Tabs/Tabs";
+import MyTabs from "../../MyTabs/MyTabs";
 
 const API_URL = "https://jsonplaceholder.typicode.com/posts";
 const cardsPerPage = 8;
