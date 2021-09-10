@@ -4,6 +4,7 @@ import {Route, Switch, useLocation} from "react-router-dom";
 import MainPage from "../pages/MainPage/MainPage";
 import CardsList from "../pages/CardsList/CardsList";
 import ErrorPage from "../pages/ErrorPage/ErrorPage";
+import CardDetails from "../pages/CardDetails/CardDetails";
 
 const Main = () => {
     const location = useLocation();
@@ -14,6 +15,7 @@ const Main = () => {
                     <Route exact path="/" component={MainPage}/>
                     <Route exact path="/main" component={MainPage}/>
                     <Route exact path="/cards" component={CardsList}/>
+                    <Route exact path="/cards/:id" component={CardDetails}/>
                     <Route path="*" component={ErrorPage}/>
                 </Switch>
             </CSSTransition>

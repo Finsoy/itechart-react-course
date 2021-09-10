@@ -29,7 +29,7 @@ const Header = () => {
             <AppBar position="static">
                 <Toolbar>
                     <NavLink className={classes.link} activeClassName={classes.active} exact to='/main'>Home</NavLink>
-                    <NavLink className={classes.link} activeClassName={classes.active} to='/cards'>Cards</NavLink>
+                    <NavLink className={classes.link} activeClassName={classes.active} exact to='/cards'>Cards</NavLink>
                 </Toolbar>
             </AppBar>
         </header>
