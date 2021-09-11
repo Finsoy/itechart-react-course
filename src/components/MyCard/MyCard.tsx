@@ -7,7 +7,7 @@ interface ICardProps {
     headerText: string;
     bodyText: string;
     id: string;
-    setCards: React.Dispatch<React.SetStateAction<ICardsDataDTO[]>>;
+    setCards?: React.Dispatch<React.SetStateAction<ICardsDataDTO[]>>;
     globalIsEdit: boolean;
     isSave: boolean;
 }
@@ -75,9 +75,11 @@ const MyCard = ({
         }, [isSave])
 
         const handleDeleteBtnClick = (id: string) => {
-            setCards((prevState => {
-                return prevState.filter((item) => item.id !== id);
-            }))
+            if (setCards) {
+                setCards((prevState => {
+                    return prevState.filter((item) => item.id !== id);
+                }))
+            }
         }
 
         const handleTitle = (e: ChangeEvent<HTMLInputElement>) => {
@@ -99,7 +101,7 @@ const MyCard = ({
 
         return (
             <Card className={classes.card}>
-                {globalIsEdit && <button className={classes.cardBtn} onClick={() => {
+                {globalIsEdit && setCards && <button className={classes.cardBtn} onClick={() => {
                     handleDeleteBtnClick(id)
                 }}>
                     <span className="material-icons">
