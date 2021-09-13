@@ -45,9 +45,9 @@ const useStyles = makeStyles({
 });
 
 const MyCard = ({
-                    headerText,
-                    bodyText,
-                    id,
+                    headerText = "title",
+                    bodyText = "body",
+                    id = "0",
                     setCards,
                     globalIsEdit,
                     isSave,

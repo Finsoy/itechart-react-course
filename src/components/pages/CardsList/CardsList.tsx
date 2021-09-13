@@ -64,6 +64,7 @@ const CardsList = () => {
 
     useEffect(() => {
         setMaxPages(Math.ceil(cards.length / cardsPerPage));
+        window.localStorage.setItem('arrayOfCards', JSON.stringify(cards));
     }, [cards])
 
 

@@ -40,6 +40,7 @@ const useStyles = makeStyles({
 const MyModal = ({
                      isOpen,
                      handleClose,
+                     cards,
                      setCards
                  }: IModalProps) => {
 
@@ -76,9 +77,9 @@ const MyModal = ({
                 console.log(`STATUS ${response.status}`)
                 return response.json()
             })
-            .then((json) => {
+            .then(async (json) => {
                 json.id = v4();
-                setCards(prevState => [...prevState, json])
+                await setCards(prevState => [...prevState, json])
             }).catch(e => console.error(e))
     }
 
