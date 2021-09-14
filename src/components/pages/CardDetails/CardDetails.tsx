@@ -43,7 +43,7 @@ const CardDetails = () => {
     }
 
     return (
-        <>
+        <div>
             <MyTabs cards={cards} tabValue={params.id}/>
             <div className={classes.container}>
                 <Typography className={classes.cardId} variant="h5" color="primary">
@@ -67,7 +67,7 @@ const CardDetails = () => {
                     Change
                 </Button>}
             </div>
-        </>
+        </div>
 
     )
 }

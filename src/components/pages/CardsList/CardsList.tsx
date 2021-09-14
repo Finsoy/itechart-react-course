@@ -69,7 +69,7 @@ const CardsList = () => {
 
 
     return (
-        <>
+        <div>
             <MyTabs cards={cards}/>
             <Button variant="contained" color="primary" onClick={() => setIsOpen(true)}
                     className={classes.addCardBtn}>
@@ -97,7 +97,7 @@ const CardsList = () => {
                 handleClose={() => setIsOpen(false)}
                 setCards={setCards}
             />
-        </>
+        </div>
     );
 };
 
