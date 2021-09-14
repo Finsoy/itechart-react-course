@@ -27,9 +27,10 @@ const CardDetails = () => {
     const params: { id: string } = useParams();
     const localstorageCards = window.localStorage.getItem('arrayOfCards');
     const cards: ICardsDataDTO[] = JSON.parse(localstorageCards!)
-    const card: ICardsDataDTO = cards.filter(item => item.id.toString() === params.id)[0]
+    const card = cards!.filter(item => item.id.toString() === params.id)[0]
     const [isEdit, setIsEdit] = useState<boolean>(false);
     const [isSave, setIsSave] = useState<boolean>(false);
+
 
     const handleSaveClick = () => {
         setIsSave(true)
@@ -49,22 +50,27 @@ const CardDetails = () => {
                     Card ID: {params.id}
                 </Typography>
                 <MyCard headerText={card.title} bodyText={card.body} id={card.id} globalIsEdit={isEdit}
-                                       isSave={isSave}/>
-                {isEdit && <Button className={classes.btn} variant="contained" color="secondary" onClick={handleCancelClick}
+                        isSave={isSave}/>
+                {isEdit &&
+                <Button className={classes.btn} variant="contained" color="secondary" onClick={handleCancelClick}
                 >
                     Cancel
                 </Button>}
-                {isEdit && <Button className={classes.btn} variant="contained" color="primary" onClick={handleSaveClick}
+                {isEdit &&
+                <Button className={classes.btn} variant="contained" color="primary" onClick={handleSaveClick}
                 >
                     Save
                 </Button>}
-                {!isEdit && <Button className={classes.btn} variant="contained" color="primary" onClick={() => setIsEdit(true)}
+                {!isEdit &&
+                <Button className={classes.btn} variant="contained" color="primary" onClick={() => setIsEdit(true)}
                 >
                     Change
                 </Button>}
             </div>
         </>
-    );
-};
+
+    )
+}
+
 
 export default CardDetails;
