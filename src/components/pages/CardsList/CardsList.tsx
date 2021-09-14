@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Button, Container} from "@material-ui/core";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Pagination from "../../Pagination/Pagination";
@@ -7,6 +7,8 @@ import MyModal from "../../../states/MyModal/MyModal";
 import {makeStyles} from "@material-ui/core/styles";
 import EditButton from "../../EditButton/EditButton";
 import ICardsDataDTO from "../../../models/ICardsDataDTO";
+import MyTabs from "../../MyTabs/MyTabs";
+import CardsContext from "../../../store/cards-context";
 
 const API_URL = "https://jsonplaceholder.typicode.com/posts";
 const cardsPerPage = 8;
@@ -31,13 +33,14 @@ const useStyles = makeStyles({
 
 const CardsList = () => {
     const classes = useStyles();
+    const ctx = useContext(CardsContext)
+    const {cards, setCards} = ctx;
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [pageNumber, setPageNumber] = useState<number>(1)
     const [globalIsEdit, setGlobalIsEdit] = useState<boolean>(false);
     const [isSave, setIsSave] = useState<boolean>(false);
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [cards, setCards] = useState<ICardsDataDTO[]>([])
     const [maxPages, setMaxPages] = useState<number>(0)
 
 
@@ -57,15 +60,17 @@ const CardsList = () => {
         }
 
         fetchAllData();
-    }, [])
+    }, [setCards])
 
     useEffect(() => {
         setMaxPages(Math.ceil(cards.length / cardsPerPage));
+        window.localStorage.setItem('arrayOfCards', JSON.stringify(cards));
     }, [cards])
 
 
     return (
         <div>
+            <MyTabs cards={cards}/>
             <Button variant="contained" color="primary" onClick={() => setIsOpen(true)}
                     className={classes.addCardBtn}>
                 Add card
@@ -90,7 +95,6 @@ const CardsList = () => {
             <MyModal
                 isOpen={isOpen}
                 handleClose={() => setIsOpen(false)}
-                cards={cards}
                 setCards={setCards}
             />
         </div>
