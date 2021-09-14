@@ -7,7 +7,6 @@ import {makeStyles} from "@material-ui/core/styles";
 interface IModalProps {
     isOpen: boolean;
     handleClose: () => void;
-    cards: ICardsDataDTO[];
     setCards: React.Dispatch<React.SetStateAction<ICardsDataDTO[]>>;
 }
 
@@ -40,7 +39,6 @@ const useStyles = makeStyles({
 const MyModal = ({
                      isOpen,
                      handleClose,
-                     cards,
                      setCards
                  }: IModalProps) => {
 

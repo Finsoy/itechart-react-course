@@ -1,7 +1,14 @@
-import React, {ChangeEvent, useEffect, useState} from 'react';
-import {Card, CardActionArea, CardContent, TextField, Typography} from "@material-ui/core";
-import {makeStyles} from '@material-ui/core/styles';
+import React, {ChangeEvent, useEffect, useReducer} from "react";
+import {
+    Card,
+    CardActionArea,
+    CardContent,
+    TextField,
+    Typography,
+} from "@material-ui/core";
+import {makeStyles} from "@material-ui/core/styles";
 import ICardsDataDTO from "../../models/ICardsDataDTO";
+import {myCardAction} from "../../models/myCardAction";
 
 interface ICardProps {
     headerText: string;
@@ -29,20 +36,61 @@ const useStyles = makeStyles({
         backgroundColor: "transparent",
         color: "#3f51b5",
         cursor: "pointer",
-        margin: ".3rem"
+        margin: ".3rem",
     },
     input: {
         margin: ".3rem",
     },
     errorText: {
         color: "red",
-        fontWeight: "bold"
+        fontWeight: "bold",
     },
     bodyText: {
         fontSize: "16px",
-        fontWeight: "normal"
-    }
+        fontWeight: "normal",
+    },
 });
+
+interface ICardState {
+    title?: string;
+    body?: string;
+    prevTitle?: string;
+    prevBody?: string;
+    isErrorTitle?: boolean;
+    isErrorBody?: boolean;
+}
+
+const cardReducer = (
+    state: ICardState,
+    action: { type: string; payload: ICardState }
+): ICardState => {
+    switch (action.type) {
+        case myCardAction.TITLE_CHANGE: {
+            const newState = {...state};
+            newState.title = action.payload.title;
+            newState.isErrorTitle = action.payload.isErrorTitle;
+            return newState;
+        }
+        case myCardAction.BODY_CHANGE: {
+            const newState = {...state};
+            newState.body = action.payload.body;
+            newState.isErrorBody = action.payload.isErrorBody;
+            return newState;
+        }
+        case myCardAction.PREV_TITLE_CHANGE: {
+            const newState = {...state};
+            newState.prevTitle = action.payload.prevTitle;
+            return newState;
+        }
+        case myCardAction.PREV_BODY_CHANGE: {
+            const newState = {...state};
+            newState.prevBody = action.payload.prevBody;
+            return newState;
+        }
+        default:
+            return state;
+    }
+};
 
 const MyCard = ({
                     headerText = "title",
@@ -52,90 +100,130 @@ const MyCard = ({
                     globalIsEdit,
                     isSave,
                 }: ICardProps) => {
+    const defaultValue = {
+        title: headerText,
+        body: bodyText,
+        prevTitle: headerText,
+        prevBody: bodyText,
+        isErrorTitle: false,
+        isErrorBody: false,
+    };
 
-        const classes = useStyles();
-        const [title, setTitle] = useState<string>(headerText)
-        const [body, setBody] = useState<string>(bodyText)
-        const [prevHeaderText, setPrevHeaderText] = useState<string>(headerText)
-        const [prevBodyText, setPrevBodyText] = useState<string>(bodyText)
-        const [isErrorHeader, setIsErrorHeader] = useState<boolean>(false)
-        const [isErrorBody, setIsErrorBody] = useState<boolean>(false)
+    const classes = useStyles();
+    const [cardState, cardDispatch] = useReducer(cardReducer, defaultValue);
 
-        useEffect(() => {
-            const check = () => {
-                if (isSave) {
-                    setPrevHeaderText(title)
-                    setPrevBodyText(body)
-                } else {
-                    setTitle(prevHeaderText);
-                    setBody(prevBodyText);
-                }
-            }
-            check()
-        }, [isSave])
-
-        const handleDeleteBtnClick = (id: string) => {
-            if (setCards) {
-                setCards((prevState => {
-                    return prevState.filter((item) => item.id !== id);
-                }))
-            }
-        }
-
-        const handleTitle = (e: ChangeEvent<HTMLInputElement>) => {
-            if (e.target.value.trim().length === 0) {
-                setIsErrorHeader(true)
+    useEffect(() => {
+        const check = () => {
+            if (isSave) {
+                cardDispatch({
+                    type: myCardAction.PREV_TITLE_CHANGE,
+                    payload: {prevTitle: cardState.title},
+                });
+                cardDispatch({
+                    type: myCardAction.PREV_BODY_CHANGE,
+                    payload: {prevBody: cardState.body},
+                });
             } else {
-                setIsErrorHeader(false)
+                cardDispatch({
+                    type: myCardAction.TITLE_CHANGE,
+                    payload: {title: cardState.prevTitle},
+                });
+                cardDispatch({
+                    type: myCardAction.BODY_CHANGE,
+                    payload: {body: cardState.prevBody},
+                });
             }
-            setTitle(e.target.value);
+        };
+        check();
+    }, [isSave]);
+
+    const handleDeleteBtnClick = (id: string) => {
+        if (setCards) {
+            setCards((prevState) => {
+                return prevState.filter((item) => item.id !== id);
+            });
         }
-        const handleBody = (e: ChangeEvent<HTMLInputElement>) => {
-            if (e.target.value.trim().length === 0) {
-                setIsErrorBody(true)
-            } else {
-                setIsErrorBody(false)
-            }
-            setBody(e.target.value);
-        }
+    };
 
-        return (
-            <Card className={classes.card}>
-                {globalIsEdit && setCards && <button className={classes.cardBtn} onClick={() => {
-                    handleDeleteBtnClick(id)
-                }}>
-                    <span className="material-icons">
-                        clear
-                    </span>
-                </button>}
-                <CardActionArea>
-                    <CardContent>
-                        {globalIsEdit ? <div><TextField required id="title"
-                                                        label="Title text"
-                                                        className={classes.input}
-                                                        value={title}
-                                                        onChange={handleTitle}/> {isErrorHeader && <p
-                                className={classes.errorText}>This field can't be
-                                empty!</p>}</div>
-                            : <Typography variant="h5" color="primary" gutterBottom>
-                                {title}
-                            </Typography>}
+    const handleTitle = (e: ChangeEvent<HTMLInputElement>) => {
+        cardDispatch({
+            type: myCardAction.TITLE_CHANGE,
+            payload: {
+                isErrorTitle: e.target.value.trim().length === 0,
+                title: e.target.value,
+            },
+        });
+    };
+    const handleBody = (e: ChangeEvent<HTMLInputElement>) => {
+        cardDispatch({
+            type: myCardAction.BODY_CHANGE,
+            payload: {
+                isErrorBody: e.target.value.trim().length === 0,
+                body: e.target.value,
+            },
+        });
+    };
 
-                        {globalIsEdit ? (<div><TextField required id="body"
-                                                         label="Body text"
-                                                         className={classes.input}
-                                                         value={body}
-                                                         onChange={handleBody}/> {isErrorBody && <p
-                                className={classes.errorText}>This field can't be
-                                empty!</p>}</div>)
-                            : <Typography variant="h6" color="primary" className={classes.bodyText} gutterBottom>
-                                {body}
-                            </Typography>}
-                    </CardContent>
-                </CardActionArea>
-            </Card>
-        );
-    }
-;
+    return (
+        <Card className={classes.card}>
+            {globalIsEdit && setCards && (
+                <button
+                    className={classes.cardBtn}
+                    onClick={() => {
+                        handleDeleteBtnClick(id);
+                    }}
+                >
+                    <span className="material-icons">clear</span>
+                </button>
+            )}
+            <CardActionArea>
+                <CardContent>
+                    {globalIsEdit ? (
+                        <div>
+                            <TextField
+                                required
+                                id="title"
+                                label="Title text"
+                                className={classes.input}
+                                value={cardState.title!}
+                                onChange={handleTitle}
+                            />{" "}{cardState.isErrorTitle && (
+                            <p className={classes.errorText}>This field can't be empty!</p>
+                        )}
+                        </div>
+                    ) : (
+                        <Typography variant="h5" color="primary" gutterBottom>
+                            {cardState.title!}
+                        </Typography>
+                    )}
 
+                    {globalIsEdit ? (
+                        <div>
+                            <TextField
+                                required
+                                id="body"
+                                label="Body text"
+                                className={classes.input}
+                                value={cardState.body!}
+                                onChange={handleBody}
+                            />{" "}
+                            {cardState.isErrorBody && (
+                                <p className={classes.errorText}>This field can't be empty!</p>
+                            )}
+                        </div>
+                    ) : (
+                        <Typography
+                            variant="h6"
+                            color="primary"
+                            className={classes.bodyText}
+                            gutterBottom
+                        >
+                            {cardState.body!}
+                        </Typography>
+                    )}
+                </CardContent>
+            </CardActionArea>
+        </Card>
+    );
+};
 export default MyCard;

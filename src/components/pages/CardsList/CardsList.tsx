@@ -95,7 +95,6 @@ const CardsList = () => {
             <MyModal
                 isOpen={isOpen}
                 handleClose={() => setIsOpen(false)}
-                cards={cards}
                 setCards={setCards}
             />
         </>
