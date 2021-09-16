@@ -1,15 +1,17 @@
-import React, { useContext, useEffect, useState, useReducer } from "react";
-import { Button, Container } from "@material-ui/core";
+import React, {useContext, useEffect, useState, useReducer} from "react";
+import {Button, Container} from "@material-ui/core";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Pagination from "../../Pagination/Pagination";
 import MyCard from "../../MyCard/MyCard";
 import MyModal from "../../../states/MyModal/MyModal";
-import { makeStyles } from "@material-ui/core/styles";
+import {makeStyles} from "@material-ui/core/styles";
 import EditButton from "../../EditButton/EditButton";
 import ICardsDataDTO from "../../../models/ICardsDataDTO";
 import MyTabs from "../../MyTabs/MyTabs";
 import CardsContext from "../../../store/cards-context";
-import { editAndSaveActions } from "../../../models/enumsActions/editAndSaveActions";
+import {editAndSaveActions} from "../../../models/enumsActions/editAndSaveActions";
+import editAndSaveReducer from "../../../redux/reducers/editAndSaveReducer";
+import initialStateForEditCard from "../../../models/initialStateForEditCard"
 
 const API_URL = "https://jsonplaceholder.typicode.com/posts";
 const cardsPerPage = 8;
@@ -32,50 +34,16 @@ const useStyles = makeStyles({
     },
 });
 
-const initialState = {
-    isEdit: false,
-    isSave: false,
-};
-
-interface IIsEditAndIsSaveState {
-    isEdit: boolean;
-    isSave: boolean;
-}
-
-const editAndSaveReducer = (state: IIsEditAndIsSaveState = initialState, action: { type: string }) => {
-    switch (action.type) {
-        case editAndSaveActions.EDIT: {
-            return {
-                isEdit: !state.isEdit,
-                isSave: false,
-            };
-        }
-        case editAndSaveActions.SAVE: {
-            return {
-                isEdit: !state.isEdit,
-                isSave: true,
-            };
-        }
-        case editAndSaveActions.CANCEL: {
-            return {
-                ...state,
-                isEdit: !state.isEdit,
-            };
-        }
-    }
-    return state;
-};
-
 const CardsList = () => {
     const classes = useStyles();
     const ctx = useContext(CardsContext);
-    const { cards, setCards } = ctx;
+    const {cards, setCards} = ctx;
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [pageNumber, setPageNumber] = useState<number>(1);
 
     const [editAndSaveState, editAndSaveStateDispatch] = useReducer(
         editAndSaveReducer,
-        initialState
+        initialStateForEditCard
     );
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -85,14 +53,11 @@ const CardsList = () => {
     const indexOfFirstCard = indexOfLastCard - cardsPerPage;
     const currentArrayCards = cards.slice(indexOfFirstCard, indexOfLastCard);
 
-    const setIsEdit = (): void => {
-        editAndSaveStateDispatch({ type: editAndSaveActions.EDIT });
+    const setIsEdit = () => {
+        editAndSaveStateDispatch({type: editAndSaveActions.EDIT});
     };
-    const setIsSave = (): void => {
-        editAndSaveStateDispatch({ type: editAndSaveActions.SAVE });
-    };
-    const setIsCancel = (): void => {
-        editAndSaveStateDispatch({ type: editAndSaveActions.CANCEL });
+    const setIsSave = () => {
+        editAndSaveStateDispatch({type: editAndSaveActions.SAVE});
     };
 
     useEffect(() => {
@@ -115,7 +80,7 @@ const CardsList = () => {
 
     return (
         <div>
-            <MyTabs cards={cards} />
+            <MyTabs cards={cards}/>
             <Button
                 variant="contained"
                 color="primary"
@@ -128,17 +93,16 @@ const CardsList = () => {
                 isEdit={editAndSaveState.isEdit}
                 setIsSave={setIsSave}
                 setIsEdit={setIsEdit}
-                setIsCancel={setIsCancel}
             />
             <Container maxWidth="lg" className={classes.cardContainer}>
-                {isLoading && <LinearProgress />}
+                {isLoading && <LinearProgress/>}
                 <Pagination
                     pageNumber={pageNumber}
                     setPageNumber={setPageNumber}
                     maxPages={maxPages}
                 />
                 <main className={classes.main}>
-                    {currentArrayCards.map(({ title, body, id }) => {
+                    {currentArrayCards.map(({title, body, id}) => {
                         return (
                             <MyCard
                                 headerText={title}

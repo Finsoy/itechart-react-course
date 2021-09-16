@@ -6,7 +6,6 @@ interface IEditButtonProps {
     isEdit: boolean;
     setIsSave: () => void;
     setIsEdit: () => void;
-    setIsCancel: () => void;
 }
 
 const useStyles = makeStyles({
@@ -17,7 +16,7 @@ const useStyles = makeStyles({
     },
 });
 
-const EditButton = ({isEdit, setIsSave, setIsEdit, setIsCancel}: IEditButtonProps) => {
+const EditButton = ({isEdit, setIsSave, setIsEdit}: IEditButtonProps) => {
     const classes = useStyles();
     return (
         <div>
@@ -44,7 +43,7 @@ const EditButton = ({isEdit, setIsSave, setIsEdit, setIsCancel}: IEditButtonProp
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={setIsCancel}
+                    onClick={setIsEdit}
                     className={classes.addCardBtn}
                 >
                     Edit all cards
