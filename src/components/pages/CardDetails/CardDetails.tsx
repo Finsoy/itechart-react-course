@@ -49,7 +49,7 @@ const CardDetails = () => {
                 <Typography className={classes.cardId} variant="h5" color="primary">
                     Card ID: {params.id}
                 </Typography>
-                <MyCard headerText={card.title} bodyText={card.body} id={card.id} globalIsEdit={isEdit}
+                <MyCard headerText={card.title} bodyText={card.body} id={card.id} isEdit={isEdit}
                         isSave={isSave}/>
                 {isEdit &&
                 <Button className={classes.btn} variant="contained" color="secondary" onClick={handleCancelClick}

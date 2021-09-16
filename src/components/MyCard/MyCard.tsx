@@ -8,14 +8,14 @@ import {
 } from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import ICardsDataDTO from "../../models/ICardsDataDTO";
-import {myCardAction} from "../../models/myCardAction";
+import {myCardAction} from "../../models/enumsActions/myCardAction";
 
 interface ICardProps {
     headerText: string;
     bodyText: string;
     id: string;
     setCards?: React.Dispatch<React.SetStateAction<ICardsDataDTO[]>>;
-    globalIsEdit: boolean;
+    isEdit: boolean;
     isSave: boolean;
 }
 
@@ -80,11 +80,13 @@ const cardReducer = (
         case myCardAction.PREV_TITLE_CHANGE: {
             const newState = {...state};
             newState.prevTitle = action.payload.prevTitle;
+            newState.title = action.payload.prevTitle;
             return newState;
         }
         case myCardAction.PREV_BODY_CHANGE: {
             const newState = {...state};
             newState.prevBody = action.payload.prevBody;
+            newState.body = action.payload.prevBody;
             return newState;
         }
         default:
@@ -97,9 +99,10 @@ const MyCard = ({
                     bodyText = "body",
                     id = "0",
                     setCards,
-                    globalIsEdit,
+                    isEdit,
                     isSave,
                 }: ICardProps) => {
+
     const defaultValue = {
         title: headerText,
         body: bodyText,
@@ -135,7 +138,7 @@ const MyCard = ({
             }
         };
         check();
-    }, [isSave]);
+    }, [isEdit]);
 
     const handleDeleteBtnClick = (id: string) => {
         if (setCards) {
@@ -166,7 +169,7 @@ const MyCard = ({
 
     return (
         <Card className={classes.card}>
-            {globalIsEdit && setCards && (
+            {isEdit && setCards && (
                 <button
                     className={classes.cardBtn}
                     onClick={() => {
@@ -178,7 +181,7 @@ const MyCard = ({
             )}
             <CardActionArea>
                 <CardContent>
-                    {globalIsEdit ? (
+                    {isEdit ? (
                         <div>
                             <TextField
                                 required
@@ -197,7 +200,7 @@ const MyCard = ({
                         </Typography>
                     )}
 
-                    {globalIsEdit ? (
+                    {isEdit ? (
                         <div>
                             <TextField
                                 required
