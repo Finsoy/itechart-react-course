@@ -1,17 +1,18 @@
-import React, {useContext, useEffect, useState, useReducer} from "react";
-import {Button, Container} from "@material-ui/core";
+import React, { useContext, useEffect, useState, useReducer } from "react";
+import { Button, Container } from "@material-ui/core";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Pagination from "../../Pagination/Pagination";
 import MyCard from "../../MyCard/MyCard";
 import MyModal from "../../../states/MyModal/MyModal";
-import {makeStyles} from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import EditButton from "../../EditButton/EditButton";
 import ICardsDataDTO from "../../../models/ICardsDataDTO";
 import MyTabs from "../../MyTabs/MyTabs";
 import CardsContext from "../../../store/cards-context";
-import {editAndSaveActions} from "../../../models/enumsActions/editAndSaveActions";
+import { editAndSaveActions } from "../../../models/enumsActions/editAndSaveActions";
 import editAndSaveReducer from "../../../redux/reducers/editAndSaveReducer";
-import initialStateForEditCard from "../../../models/initialStateForEditCard"
+import initialStateForEditCard from "../../../models/initialStateForEditCard";
+import addOrRemoveCardReducer from "../../../redux/reducers/addOrRemoveCardReducer";
 
 const API_URL = "https://jsonplaceholder.typicode.com/posts";
 const cardsPerPage = 8;
@@ -37,7 +38,7 @@ const useStyles = makeStyles({
 const CardsList = () => {
     const classes = useStyles();
     const ctx = useContext(CardsContext);
-    const {cards, setCards} = ctx;
+    const { cards, setCards } = ctx;
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [pageNumber, setPageNumber] = useState<number>(1);
 
@@ -46,6 +47,8 @@ const CardsList = () => {
         initialStateForEditCard
     );
 
+    const [, addOrRemoveCardDispatch] = useReducer(addOrRemoveCardReducer, []);
+
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [maxPages, setMaxPages] = useState<number>(0);
 
@@ -53,11 +56,24 @@ const CardsList = () => {
     const indexOfFirstCard = indexOfLastCard - cardsPerPage;
     const currentArrayCards = cards.slice(indexOfFirstCard, indexOfLastCard);
 
+    const handleDeleteBtnClick = (id: string) => {
+        addOrRemoveCardDispatch({ type: "REMOVE", setCards, id });
+    };
+
+    const handleAddBtnClick = (cardHeaderText: string, cardBodyText: string) => {
+        addOrRemoveCardDispatch({
+            type: "ADD",
+            setCards,
+            cardHeaderText,
+            cardBodyText,
+        });
+    };
+
     const setIsEdit = () => {
-        editAndSaveStateDispatch({type: editAndSaveActions.EDIT});
+        editAndSaveStateDispatch({ type: editAndSaveActions.EDIT });
     };
     const setIsSave = () => {
-        editAndSaveStateDispatch({type: editAndSaveActions.SAVE});
+        editAndSaveStateDispatch({ type: editAndSaveActions.SAVE });
     };
 
     useEffect(() => {
@@ -80,7 +96,7 @@ const CardsList = () => {
 
     return (
         <div>
-            <MyTabs cards={cards}/>
+            <MyTabs cards={cards} />
             <Button
                 variant="contained"
                 color="primary"
@@ -95,14 +111,14 @@ const CardsList = () => {
                 setIsEdit={setIsEdit}
             />
             <Container maxWidth="lg" className={classes.cardContainer}>
-                {isLoading && <LinearProgress/>}
+                {isLoading && <LinearProgress />}
                 <Pagination
                     pageNumber={pageNumber}
                     setPageNumber={setPageNumber}
                     maxPages={maxPages}
                 />
                 <main className={classes.main}>
-                    {currentArrayCards.map(({title, body, id}) => {
+                    {currentArrayCards.map(({ title, body, id }) => {
                         return (
                             <MyCard
                                 headerText={title}
@@ -112,6 +128,7 @@ const CardsList = () => {
                                 isEdit={editAndSaveState.isEdit}
                                 key={id}
                                 isSave={editAndSaveState.isSave}
+                                handleDeleteBtnClick={handleDeleteBtnClick}
                             />
                         );
                     })}
@@ -121,9 +138,11 @@ const CardsList = () => {
                 isOpen={isOpen}
                 handleClose={() => setIsOpen(false)}
                 setCards={setCards}
+                handleAddBtnClick={handleAddBtnClick}
             />
         </div>
     );
+
 };
 
 export default CardsList;

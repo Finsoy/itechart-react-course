@@ -18,6 +18,7 @@ interface ICardProps {
     setCards?: React.Dispatch<React.SetStateAction<ICardsDataDTO[]>>;
     isEdit: boolean;
     isSave: boolean;
+    handleDeleteBtnClick?: (id: string) => void
 }
 
 const useStyles = makeStyles({
@@ -60,6 +61,7 @@ const MyCard = ({
                     setCards,
                     isEdit,
                     isSave,
+                    handleDeleteBtnClick
                 }: ICardProps) => {
 
     const defaultValue = {
@@ -99,14 +101,6 @@ const MyCard = ({
         check();
     }, [isEdit]);
 
-    const handleDeleteBtnClick = (id: string) => {
-        if (setCards) {
-            setCards((prevState) => {
-                return prevState.filter((item) => item.id !== id);
-            });
-        }
-    };
-
     const handleTitle = (e: ChangeEvent<HTMLInputElement>) => {
         cardDispatch({
             type: myCardAction.TITLE_CHANGE,
@@ -132,7 +126,7 @@ const MyCard = ({
                 <button
                     className={classes.cardBtn}
                     onClick={() => {
-                        handleDeleteBtnClick(id);
+                        handleDeleteBtnClick && handleDeleteBtnClick(id);
                     }}
                 >
                     <span className="material-icons">clear</span>
