@@ -15,7 +15,7 @@ interface ICardProps {
     headerText: string;
     bodyText: string;
     id: string;
-    setCards?: React.Dispatch<React.SetStateAction<ICardsDataDTO[]>>;
+    setCards?: (cards: ICardsDataDTO[]) => void
     isEdit: boolean;
     isSave: boolean;
     handleDeleteBtnClick?: (id: string) => void

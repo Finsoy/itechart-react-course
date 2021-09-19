@@ -1,12 +1,10 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { Button, Modal, TextField } from "@material-ui/core";
-import ICardsDataDTO from "../../models/ICardsDataDTO";
 import { makeStyles } from "@material-ui/core/styles";
 
 interface IModalProps {
     isOpen: boolean;
     handleClose: () => void;
-    setCards: React.Dispatch<React.SetStateAction<ICardsDataDTO[]>>;
     handleAddBtnClick: (cardHeaderText: string, cardBodyText: string) => void;
 }
 
@@ -39,7 +37,6 @@ const useStyles = makeStyles({
 const MyModal = ({
                      isOpen,
                      handleClose,
-                     setCards,
                      handleAddBtnClick,
                  }: IModalProps) => {
     const classes = useStyles();

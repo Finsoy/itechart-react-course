@@ -1,11 +1,11 @@
-import { v4 } from "uuid";
+import {v4} from "uuid";
 import ICardsDataDTO from "../../models/ICardsDataDTO";
-import React from "react";
 
 interface IAddOrRemoveCardAction {
     type: string;
     id?: string;
-    setCards: React.Dispatch<React.SetStateAction<ICardsDataDTO[]>>;
+    cards: ICardsDataDTO[];
+    setCards: (cards: ICardsDataDTO[]) => void
     cardHeaderText?: string;
     cardBodyText?: string;
 }
@@ -32,19 +32,15 @@ const addOrRemoveCardReducer = (
                 })
                 .then(async (json) => {
                     json.id = v4();
-                    if (action.setCards) {
-                        return action.setCards((prevState) => [...prevState, json]);
-                    }
+                    action.setCards([...action.cards, json])
+                    return;
                 })
                 .catch((e) => console.error(e));
             break;
         }
         case "REMOVE": {
-            if (action.setCards) {
-                action.setCards((prevState) => {
-                    return prevState.filter((item) => item.id !== action.id);
-                });
-            }
+            action.setCards(action.cards.filter((item) => item.id !== action.id));
+            return;
         }
     }
     return state;

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useReducer } from "react";
+import React, {useEffect, useState, useReducer, useCallback} from "react";
 import { Button, Container } from "@material-ui/core";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Pagination from "../../Pagination/Pagination";
@@ -8,11 +8,12 @@ import { makeStyles } from "@material-ui/core/styles";
 import EditButton from "../../EditButton/EditButton";
 import ICardsDataDTO from "../../../models/ICardsDataDTO";
 import MyTabs from "../../MyTabs/MyTabs";
-import CardsContext from "../../../store/cards-context";
 import { editAndSaveActions } from "../../../models/enumsActions/editAndSaveActions";
 import editAndSaveReducer from "../../../redux/reducers/editAndSaveReducer";
 import initialStateForEditCard from "../../../models/initialStateForEditCard";
 import addOrRemoveCardReducer from "../../../redux/reducers/addOrRemoveCardReducer";
+import {useDispatch, useSelector} from "react-redux";
+import ICardsState from "../../../models/ICardsState";
 
 const API_URL = "https://jsonplaceholder.typicode.com/posts";
 const cardsPerPage = 8;
@@ -37,8 +38,9 @@ const useStyles = makeStyles({
 
 const CardsList = () => {
     const classes = useStyles();
-    const ctx = useContext(CardsContext);
-    const { cards, setCards } = ctx;
+    const cards = useSelector((state:ICardsState) => state.cards)
+    const dispatch = useDispatch();
+    const setCards = useCallback((cards: ICardsDataDTO[]) => dispatch({type: "UPDATE", payload: cards}), [dispatch])
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [pageNumber, setPageNumber] = useState<number>(1);
 
@@ -57,12 +59,13 @@ const CardsList = () => {
     const currentArrayCards = cards.slice(indexOfFirstCard, indexOfLastCard);
 
     const handleDeleteBtnClick = (id: string) => {
-        addOrRemoveCardDispatch({ type: "REMOVE", setCards, id });
+        addOrRemoveCardDispatch({ type: "REMOVE", cards, setCards, id });
     };
 
     const handleAddBtnClick = (cardHeaderText: string, cardBodyText: string) => {
         addOrRemoveCardDispatch({
             type: "ADD",
+            cards,
             setCards,
             cardHeaderText,
             cardBodyText,
@@ -82,7 +85,7 @@ const CardsList = () => {
             const response = await fetch(`${API_URL}?_limit=${LIMIT_CARDS}`);
             const allCards: ICardsDataDTO[] = await response.json();
             setMaxPages(Math.ceil(allCards.length / cardsPerPage));
-            setCards(allCards);
+            setCards(allCards)
             setIsLoading(false);
         }
 
@@ -137,7 +140,6 @@ const CardsList = () => {
             <MyModal
                 isOpen={isOpen}
                 handleClose={() => setIsOpen(false)}
-                setCards={setCards}
                 handleAddBtnClick={handleAddBtnClick}
             />
         </div>
