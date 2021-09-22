@@ -1,14 +1,19 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Button, Container} from "@material-ui/core";
+import React, {useEffect, useState, useReducer, useCallback} from "react";
+import { Button, Container } from "@material-ui/core";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Pagination from "../../Pagination/Pagination";
 import MyCard from "../../MyCard/MyCard";
 import MyModal from "../../../states/MyModal/MyModal";
-import {makeStyles} from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import EditButton from "../../EditButton/EditButton";
 import ICardsDataDTO from "../../../models/ICardsDataDTO";
 import MyTabs from "../../MyTabs/MyTabs";
-import CardsContext from "../../../store/cards-context";
+import { editAndSaveActions } from "../../../models/enumsActions/editAndSaveActions";
+import editAndSaveReducer from "../../../redux/reducers/editAndSaveReducer";
+import initialStateForEditCard from "../../../models/initialStateForEditCard";
+import addOrRemoveCardReducer from "../../../redux/reducers/addOrRemoveCardReducer";
+import {useDispatch, useSelector} from "react-redux";
+import ICardsState from "../../../models/ICardsState";
 
 const API_URL = "https://jsonplaceholder.typicode.com/posts";
 const cardsPerPage = 8;
@@ -18,7 +23,7 @@ const useStyles = makeStyles({
     cardContainer: {
         display: "flex",
         flexWrap: "wrap",
-        flexDirection: "column"
+        flexDirection: "column",
     },
     main: {
         display: "flex",
@@ -27,78 +32,119 @@ const useStyles = makeStyles({
     addCardBtn: {
         margin: "1rem auto",
         display: "flex",
-        justifyContent: "center"
-    }
+        justifyContent: "center",
+    },
 });
 
 const CardsList = () => {
     const classes = useStyles();
-    const ctx = useContext(CardsContext)
-    const {cards, setCards} = ctx;
+    const cards = useSelector((state:ICardsState) => state.cards)
+    const dispatch = useDispatch();
+    const setCards = useCallback((cards: ICardsDataDTO[]) => dispatch({type: "UPDATE", payload: cards}), [dispatch])
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [pageNumber, setPageNumber] = useState<number>(1)
-    const [globalIsEdit, setGlobalIsEdit] = useState<boolean>(false);
-    const [isSave, setIsSave] = useState<boolean>(false);
+    const [pageNumber, setPageNumber] = useState<number>(1);
 
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [maxPages, setMaxPages] = useState<number>(0)
+    const [editAndSaveState, editAndSaveStateDispatch] = useReducer(
+        editAndSaveReducer,
+        initialStateForEditCard
+    );
 
+    const [, addOrRemoveCardDispatch] = useReducer(addOrRemoveCardReducer, []);
+
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [maxPages, setMaxPages] = useState<number>(0);
 
     const indexOfLastCard = pageNumber * cardsPerPage;
     const indexOfFirstCard = indexOfLastCard - cardsPerPage;
-    const currentArrayCards = cards.slice(indexOfFirstCard, indexOfLastCard)
+    const currentArrayCards = cards.slice(indexOfFirstCard, indexOfLastCard);
 
+    const handleDeleteBtnClick = (id: string) => {
+        addOrRemoveCardDispatch({ type: "REMOVE", cards, setCards, id });
+    };
+
+    const handleAddBtnClick = (cardHeaderText: string, cardBodyText: string) => {
+        addOrRemoveCardDispatch({
+            type: "ADD",
+            cards,
+            setCards,
+            cardHeaderText,
+            cardBodyText,
+        });
+    };
+
+    const setIsEdit = () => {
+        editAndSaveStateDispatch({ type: editAndSaveActions.EDIT });
+    };
+    const setIsSave = () => {
+        editAndSaveStateDispatch({ type: editAndSaveActions.SAVE });
+    };
 
     useEffect(() => {
         async function fetchAllData() {
-            setIsLoading(true)
-            const response = await fetch(`${API_URL}?_limit=${LIMIT_CARDS}`)
+            setIsLoading(true);
+            const response = await fetch(`${API_URL}?_limit=${LIMIT_CARDS}`);
             const allCards: ICardsDataDTO[] = await response.json();
             setMaxPages(Math.ceil(allCards.length / cardsPerPage));
             setCards(allCards)
-            setIsLoading(false)
+            setIsLoading(false);
         }
 
         fetchAllData();
-    }, [setCards])
+    }, [setCards]);
 
     useEffect(() => {
         setMaxPages(Math.ceil(cards.length / cardsPerPage));
-        window.localStorage.setItem('arrayOfCards', JSON.stringify(cards));
-    }, [cards])
-
+        window.localStorage.setItem("arrayOfCards", JSON.stringify(cards));
+    }, [cards]);
 
     return (
         <div>
-            <MyTabs cards={cards}/>
-            <Button variant="contained" color="primary" onClick={() => setIsOpen(true)}
-                    className={classes.addCardBtn}>
+            <MyTabs cards={cards} />
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setIsOpen(true)}
+                className={classes.addCardBtn}
+            >
                 Add card
             </Button>
-            <EditButton globalIsEdit={globalIsEdit} setIsSave={setIsSave} setGlobalIsEdit={setGlobalIsEdit}/>
+            <EditButton
+                isEdit={editAndSaveState.isEdit}
+                setIsSave={setIsSave}
+                setIsEdit={setIsEdit}
+            />
             <Container maxWidth="lg" className={classes.cardContainer}>
-                {isLoading && <LinearProgress/>}
-                <Pagination pageNumber={pageNumber} setPageNumber={setPageNumber} maxPages={maxPages}/>
+                {isLoading && <LinearProgress />}
+                <Pagination
+                    pageNumber={pageNumber}
+                    setPageNumber={setPageNumber}
+                    maxPages={maxPages}
+                />
                 <main className={classes.main}>
-                    {currentArrayCards.map(({title, body, id}) => {
-                        return <MyCard
-                            headerText={title}
-                            bodyText={body}
-                            id={id}
-                            setCards={setCards}
-                            globalIsEdit={globalIsEdit}
-                            key={id}
-                            isSave={isSave}/>
+                    {currentArrayCards.map(({ title, body, id }) => {
+                        return (
+                            <MyCard
+                                headerText={title}
+                                bodyText={body}
+                                id={id}
+                                setCards={setCards}
+                                isEdit={editAndSaveState.isEdit}
+                                key={id}
+                                isSave={editAndSaveState.isSave}
+                                handleDeleteBtnClick={handleDeleteBtnClick}
+                            />
+                        );
                     })}
                 </main>
             </Container>
             <MyModal
                 isOpen={isOpen}
                 handleClose={() => setIsOpen(false)}
-                setCards={setCards}
+                handleAddBtnClick={handleAddBtnClick}
             />
         </div>
     );
+
 };
 
 export default CardsList;
