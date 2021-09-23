@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useReducer, useCallback} from "react";
+import React, { useEffect, useState, useReducer, useCallback } from "react";
 import { Button, Container } from "@material-ui/core";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Pagination from "../../Pagination/Pagination";
@@ -11,13 +11,16 @@ import MyTabs from "../../MyTabs/MyTabs";
 import { editAndSaveActions } from "../../../models/enumsActions/editAndSaveActions";
 import editAndSaveReducer from "../../../redux/reducers/editAndSaveReducer";
 import initialStateForEditCard from "../../../models/initialStateForEditCard";
-import addOrRemoveCardReducer from "../../../redux/reducers/addOrRemoveCardReducer";
-import {useDispatch, useSelector} from "react-redux";
+import addOrRemoveCardReducer, {
+    ADD,
+    REMOVE,
+} from "../../../redux/reducers/addOrRemoveCardReducer";
+import { useDispatch, useSelector } from "react-redux";
 import ICardsState from "../../../models/ICardsState";
+import { fetchAllData } from "../../../redux/asyncFunction/fetchAllData";
+import { updateAction } from "../../../redux/reducers/arrayOfCardsReducer";
 
-const API_URL = "https://jsonplaceholder.typicode.com/posts";
 const cardsPerPage = 8;
-const LIMIT_CARDS = 10;
 
 const useStyles = makeStyles({
     cardContainer: {
@@ -38,9 +41,12 @@ const useStyles = makeStyles({
 
 const CardsList = () => {
     const classes = useStyles();
-    const cards = useSelector((state:ICardsState) => state.cards)
+    const cards = useSelector((state: ICardsState) => state.cards);
     const dispatch = useDispatch();
-    const setCards = useCallback((cards: ICardsDataDTO[]) => dispatch({type: "UPDATE", payload: cards}), [dispatch])
+    const setCards = useCallback(
+        (cards: ICardsDataDTO[]) => dispatch(updateAction(cards)),
+        [dispatch]
+    );
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [pageNumber, setPageNumber] = useState<number>(1);
 
@@ -59,12 +65,12 @@ const CardsList = () => {
     const currentArrayCards = cards.slice(indexOfFirstCard, indexOfLastCard);
 
     const handleDeleteBtnClick = (id: string) => {
-        addOrRemoveCardDispatch({ type: "REMOVE", cards, setCards, id });
+        addOrRemoveCardDispatch({ type: REMOVE, cards, setCards, id });
     };
 
     const handleAddBtnClick = (cardHeaderText: string, cardBodyText: string) => {
         addOrRemoveCardDispatch({
-            type: "ADD",
+            type: ADD,
             cards,
             setCards,
             cardHeaderText,
@@ -80,17 +86,10 @@ const CardsList = () => {
     };
 
     useEffect(() => {
-        async function fetchAllData() {
-            setIsLoading(true);
-            const response = await fetch(`${API_URL}?_limit=${LIMIT_CARDS}`);
-            const allCards: ICardsDataDTO[] = await response.json();
-            setMaxPages(Math.ceil(allCards.length / cardsPerPage));
-            setCards(allCards)
-            setIsLoading(false);
-        }
-
-        fetchAllData();
-    }, [setCards]);
+        setIsLoading(true);
+        dispatch(fetchAllData());
+        setIsLoading(false);
+    }, [setCards, dispatch]);
 
     useEffect(() => {
         setMaxPages(Math.ceil(cards.length / cardsPerPage));
@@ -99,7 +98,7 @@ const CardsList = () => {
 
     return (
         <div>
-            <MyTabs cards={cards} />
+            <MyTabs />
             <Button
                 variant="contained"
                 color="primary"
@@ -139,12 +138,10 @@ const CardsList = () => {
             </Container>
             <MyModal
                 isOpen={isOpen}
-                handleClose={() => setIsOpen(false)}
-                handleAddBtnClick={handleAddBtnClick}
+                handleClose={() => setIsOpen(false)}handleAddBtnClick={handleAddBtnClick}
             />
         </div>
     );
-
 };
 
 export default CardsList;
