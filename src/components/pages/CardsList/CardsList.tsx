@@ -87,9 +87,9 @@ const CardsList = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-             setIsLoading(true);
+            setIsLoading(true);
             await dispatch(fetchAllData());
-             setIsLoading(false);
+            setIsLoading(false);
         }
         fetchData()
     }, [dispatch]);
@@ -134,6 +134,7 @@ const CardsList = () => {
                                 key={id}
                                 isSave={editAndSaveState.isSave}
                                 handleDeleteBtnClick={handleDeleteBtnClick}
+                                data-testid="MyCard"
                             />
                         );
                     })}
